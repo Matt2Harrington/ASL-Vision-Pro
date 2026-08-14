@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      DEV entitlements — no main-camera-access key, so device builds sign and run WITHOUT
+      Apple's managed entitlement approval. The camera feed will be denied at runtime
+      (CameraFeedProvider handles this gracefully); use this to develop the UI/pipeline
+      while your "Request Access" for main-camera-access is pending.
+
+      Once Apple approves the capability for your team + bundle ID, switch
+      CODE_SIGN_ENTITLEMENTS back to ASLVisionPro.entitlements in project.yml and re-run
+      `xcodegen generate`.
+    -->
+</dict>
+</plist>

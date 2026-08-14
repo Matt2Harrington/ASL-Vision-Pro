@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      Enterprise main-camera access. This key is only honored when Apple issues a matching
+      managed entitlement + license file for your team (see ARCHITECTURE.md §1). Without it,
+      the ARKit camera authorization request is denied at runtime.
+    -->
+    <key>com.apple.developer.arkit.main-camera-access.allow</key>
+    <true/>
+</dict>
+</plist>

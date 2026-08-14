@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "description": "Canonical feature contract shared by the Swift FeatureEncoder (inference) and the Python trainer. If these two drift, accuracy silently collapses. This file is the single source of truth; both sides must match it.",
+  "sequence_length": 24,
+  "points": {
+    "left_hand": 21,
+    "right_hand": 21,
+    "body": 8,
+    "face": 16
+  },
+  "coords_per_point": 2,
+  "features_per_frame": 132,
+  "input_shape": [1, 24, 132],
+  "normalization": {
+    "method": "torso_centered_shoulder_scaled",
+    "anchor": "body point 0",
+    "scale": "euclidean distance between body point 0 and body point 1",
+    "min_scale": 0.05
+  },
+  "io": {
+    "input_feature_name": "landmarks",
+    "output_feature_name": "probabilities"
+  },
+  "confidence_threshold": 0.6,
+  "continuous": {
+    "description": "Level-3 CTC path: variable-ish length context of frames -> per-timestep logits over vocab + blank. Consumed by the Swift ContinuousSignRecognizer and produced by training/model_ctc.py.",
+    "context_frames": 64,
+    "input_feature_name": "landmarks",
+    "output_feature_name": "logits",
+    "blank_index": 0
+  }
+}

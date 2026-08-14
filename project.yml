@@ -1,0 +1,63 @@
+# XcodeGen spec — generates ASLVisionPro.xcodeproj from these sources.
+# Install: brew install xcodegen   Then run: xcodegen generate
+#
+# Two app targets share the platform-agnostic pipeline in ASLVisionPro/Shared:
+#   • ASLVisionPro      — visionOS, enterprise main-camera passthrough
+#   • ASLVisionPro-iOS  — iOS, iPhone camera (backup, no special entitlement)
+
+name: ASLVisionPro
+options:
+  bundleIdPrefix: com.mattharrington
+  deploymentTarget:
+    visionOS: "2.0"
+    iOS: "17.0"
+
+targets:
+  # ---- visionOS app ---------------------------------------------------------
+  ASLVisionPro:
+    type: application
+    platform: visionOS
+    sources:
+      - path: ASLVisionPro/Shared
+      - path: ASLVisionPro/visionOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro
+        INFOPLIST_FILE: ASLVisionPro/visionOS/Support/Info.plist
+        # DEV DEFAULT: no-camera entitlements so device builds work while Apple's
+        # main-camera-access "Request Access" is pending. AFTER APPROVAL, switch this to
+        #   ASLVisionPro/visionOS/Support/ASLVisionPro.entitlements
+        # and re-run `xcodegen generate`.
+        CODE_SIGN_ENTITLEMENTS: ASLVisionPro/visionOS/Support/ASLVisionPro-NoCamera.entitlements
+        SWIFT_VERSION: "5.10"
+        GENERATE_INFOPLIST_FILE: NO
+        DEVELOPMENT_TEAM: ""
+
+  # ---- Unit tests (shared pipeline logic) -----------------------------------
+  ASLVisionProTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+      - path: ASLVisionPro/Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro.Tests
+        SWIFT_VERSION: "5.10"
+        GENERATE_INFOPLIST_FILE: YES
+
+  # ---- iOS app (backup) -----------------------------------------------------
+  ASLVisionPro-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: ASLVisionPro/Shared
+      - path: ASLVisionPro/iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro.iOS
+        INFOPLIST_FILE: ASLVisionPro/iOS/Support/Info.plist
+        SWIFT_VERSION: "5.10"
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1,2"   # iPhone + iPad
+        DEVELOPMENT_TEAM: ""
