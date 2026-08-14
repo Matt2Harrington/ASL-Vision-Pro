@@ -5,11 +5,13 @@ import SwiftUI
 struct ModeSelectionView: View {
     @State private var mode: Mode?
 
-    enum Mode: Hashable { case tutor, interpret }
+    enum Mode: Hashable { case tutor, interpret, dictionary, collect }
 
-    /// Starter lesson — pulled from the Level-2 vocabulary (training/VOCABULARY.md).
-    private let starterLesson = ["HELLO", "THANK-YOU", "PLEASE", "YES", "NO",
-                                 "NAME", "HELP", "GOOD", "SORRY", "FRIEND"]
+    /// Lessons come from the shared catalog, so content and practice never drift apart.
+    private var starterLesson: [String] {
+        let lesson = SignCatalog.shared.entries.prefix(10).map(\.gloss)
+        return lesson.isEmpty ? ["HELLO", "THANK-YOU", "PLEASE"] : Array(lesson)
+    }
 
     var body: some View {
         switch mode {
@@ -17,6 +19,12 @@ struct ModeSelectionView: View {
             TutorView(lesson: starterLesson)
         case .interpret:
             ContentView()
+        case .dictionary:
+            DictionaryView()
+        case .collect:
+            DataCollectorView(prompts: SignCatalog.shared.entries.map(\.gloss),
+                              source: HandTrackingSource(),
+                              signerID: "signer-1")
         case nil:
             chooser
         }
@@ -31,7 +39,7 @@ struct ModeSelectionView: View {
                     .foregroundStyle(.secondary)
             }
 
-            HStack(spacing: 24) {
+            HStack(spacing: 20) {
                 modeCard(
                     title: "Tutor",
                     subtitle: "Practice signing",
@@ -39,6 +47,24 @@ struct ModeSelectionView: View {
                     systemImage: "hand.raised.fill",
                     available: true
                 ) { mode = .tutor }
+
+                modeCard(
+                    title: "Dictionary",
+                    subtitle: "Look up signs",
+                    detail: "Browse signs by category with a full parameter breakdown. No camera or model needed.",
+                    systemImage: "book.fill",
+                    available: true
+                ) { mode = .dictionary }
+            }
+
+            HStack(spacing: 20) {
+                modeCard(
+                    title: "Collect Data",
+                    subtitle: "Record training clips",
+                    detail: "Prompts a sign, records auto-labeled 3D landmarks. Internal tool for building the dataset.",
+                    systemImage: "record.circle.fill",
+                    available: true
+                ) { mode = .collect }
 
                 modeCard(
                     title: "Interpret",

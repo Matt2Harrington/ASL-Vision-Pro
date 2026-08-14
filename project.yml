@@ -19,6 +19,9 @@ targets:
     platform: visionOS
     sources:
       - path: ASLVisionPro/Shared
+        excludes: ["Resources/**"]
+      - path: ASLVisionPro/Shared/Resources
+        buildPhase: resources
       - path: ASLVisionPro/visionOS
     settings:
       base:
@@ -40,6 +43,9 @@ targets:
     sources:
       - path: Tests
       - path: ASLVisionPro/Shared
+        excludes: ["Resources/**"]
+      - path: ASLVisionPro/Shared/Resources
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro.Tests
@@ -52,6 +58,9 @@ targets:
     platform: iOS
     sources:
       - path: ASLVisionPro/Shared
+        excludes: ["Resources/**"]
+      - path: ASLVisionPro/Shared/Resources
+        buildPhase: resources
       - path: ASLVisionPro/iOS
     settings:
       base:

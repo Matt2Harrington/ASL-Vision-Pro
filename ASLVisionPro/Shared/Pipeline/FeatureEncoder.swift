@@ -42,6 +42,15 @@ enum FeatureEncoder {
         return try? MLDictionaryFeatureProvider(dictionary: ["landmarks": MLFeatureValue(multiArray: array)])
     }
 
+    /// Same normalization as `encode`, returned as a plain `[sequenceLength][featuresPerFrame]`
+    /// matrix instead of an MLMultiArray. Used by `DataCollector` to export training clips —
+    /// going through this shared path is what guarantees the recorded features are byte-for-byte
+    /// what the model will see at inference (MODEL_PLAN §2).
+    static func encodeMatrix(_ window: SignSegmenter.Window) -> [[Float]]? {
+        guard !window.frames.isEmpty else { return nil }
+        return padOrTrim(window.frames, to: sequenceLength).map(flatten)
+    }
+
     /// Flatten one frame into a normalized [x0,y0,z0,x1,y1,z1,...] vector, centered on the
     /// torso and scaled by shoulder width so recognition is invariant to signer
     /// distance/position. `z` is 0 for 2D sources and a real depth for hand tracking.
