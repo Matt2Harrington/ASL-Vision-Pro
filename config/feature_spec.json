@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "description": "Canonical feature contract shared by the Swift FeatureEncoder (inference) and the Python trainer. If these two drift, accuracy silently collapses. This file is the single source of truth; both sides must match it.",
+  "version": 2,
+  "description": "Canonical feature contract shared by the Swift FeatureEncoder (inference) and the Python trainer. If these two drift, accuracy silently collapses. This file is the single source of truth; both sides must match it. v2: coords_per_point 2 -> 3 (x, y, z). Depth is real for ARKit hand tracking and 0 for 2D camera sources.",
   "sequence_length": 24,
   "points": {
     "left_hand": 21,
@@ -8,9 +8,9 @@
     "body": 8,
     "face": 16
   },
-  "coords_per_point": 2,
-  "features_per_frame": 132,
-  "input_shape": [1, 24, 132],
+  "coords_per_point": 3,
+  "features_per_frame": 198,
+  "input_shape": [1, 24, 198],
   "normalization": {
     "method": "torso_centered_shoulder_scaled",
     "anchor": "body point 0",
