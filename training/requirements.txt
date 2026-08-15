@@ -1,5 +1,5 @@
-# Use a Python 3.11 venv — coremltools and torch lag the newest Python releases.
-#   python3.11 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+# Use a Python 3.10 venv — coremltools and torch lag the newest Python releases.
+#   python3.10 -m venv .venv && .venv/bin/pip install -r requirements.txt
 numpy>=1.26
 torch>=2.2
 coremltools>=8.0

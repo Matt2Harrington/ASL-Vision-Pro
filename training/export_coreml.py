@@ -32,10 +32,22 @@ def main():
     wrapped = SignClassifierWithSoftmax(model).eval()
 
     example = torch.rand(1, SEQ_LEN, FEATURES_PER_FRAME)
-    traced = torch.jit.trace(wrapped, example)
+
+    # Prefer torch.export (the supported path in coremltools 8+). torch.jit.trace is legacy
+    # and its trace verification fails on torch versions newer than coremltools has been
+    # tested against, so it's only the fallback for older torch.
+    try:
+        exported = torch.export.export(wrapped, (example,))
+        # Exported programs start in the TRAINING dialect, which coremltools rejects;
+        # decomposing lowers it to ATEN, which is what the converter supports.
+        source = exported.run_decompositions({})
+        print("converting via torch.export")
+    except Exception as e:
+        print(f"torch.export unavailable ({type(e).__name__}), falling back to jit.trace")
+        source = torch.jit.trace(wrapped, example, check_trace=False)
 
     mlmodel = ct.convert(
-        traced,
+        source,
         inputs=[ct.TensorType(name=INPUT_NAME, shape=(1, SEQ_LEN, FEATURES_PER_FRAME))],
         outputs=[ct.TensorType(name=OUTPUT_NAME)],
         minimum_deployment_target=ct.target.iOS17,

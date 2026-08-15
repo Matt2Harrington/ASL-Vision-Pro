@@ -5,13 +5,34 @@ See [../MODEL_PLAN.md](../MODEL_PLAN.md) for the strategy and [../config/feature
 
 ## Setup
 
-coremltools/torch lag new Python versions — use a **3.11** venv:
+coremltools/torch lag new Python versions — use a **3.10** venv (verified working):
 
 ```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python3.10 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 ```
+
+## Verified end-to-end
+
+The full chain has been run and confirmed:
+
+```bash
+.venv/bin/python synth.py --labels labels.json --out data/synth.npz
+.venv/bin/python train.py --data data/synth.npz --labels labels.json --epochs 20 --out ckpt.pt
+.venv/bin/python export_coreml.py --ckpt ckpt.pt --labels labels.json --out SignModel.mlpackage --quantize
+```
+
+Produces a 904 KB quantized `.mlpackage` with input `landmarks` `[1, 24, 198]` and output
+`probabilities` `[1, 27]` — matching the Swift `FeatureEncoder` and `CoreMLSignRecognizer`
+exactly. Copying it to `ASLVisionPro/Shared/Models/` and `labels.json` to
+`ASLVisionPro/Shared/Resources/` makes Xcode compile it to `SignModel.mlmodelc`, which
+`RecognizerFactory` then loads with no code change.
+
+> **The synthetic model is meaningless.** `synth.py` builds each class from a distinct random
+> prototype, so 100% validation accuracy is expected and says nothing about recognition. It
+> exists only to prove the toolchain before investing in data collection. The trained model is
+> gitignored for exactly this reason — a committed placeholder would mislead. Without it the
+> app falls back to the stub recognizer by design, and still builds.
 
 ## Prove the toolchain (synthetic data, no ASL data needed)
 
