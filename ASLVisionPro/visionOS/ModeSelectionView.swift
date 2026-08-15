@@ -5,7 +5,7 @@ import SwiftUI
 struct ModeSelectionView: View {
     @State private var mode: Mode?
 
-    enum Mode: Hashable { case tutor, interpret, dictionary, collect }
+    enum Mode: Hashable { case tutor, interpret, dictionary, collect, listen }
 
     /// Lessons come from the shared catalog, so content and practice never drift apart.
     private var starterLesson: [String] {
@@ -19,6 +19,12 @@ struct ModeSelectionView: View {
             TutorView(lesson: starterLesson)
         case .interpret:
             ContentView()
+        case .listen:
+            if #available(visionOS 26.0, *) {
+                ListenView()
+            } else {
+                unavailableView("Listen mode needs visionOS 26 or newer.")
+            }
         case .dictionary:
             DictionaryView()
         case .collect:
@@ -59,6 +65,14 @@ struct ModeSelectionView: View {
 
             HStack(spacing: 20) {
                 modeCard(
+                    title: "Listen",
+                    subtitle: "Speech to captions",
+                    detail: "Transcribes speech on-device, with optional ASL gloss. No camera or model needed — needs visionOS 26.",
+                    systemImage: "waveform",
+                    available: isListenAvailable
+                ) { mode = .listen }
+
+                modeCard(
                     title: "Collect Data",
                     subtitle: "Record training clips",
                     detail: "Prompts a sign, records auto-labeled 3D landmarks. Internal tool for building the dataset.",
@@ -76,6 +90,19 @@ struct ModeSelectionView: View {
             }
         }
         .padding(48)
+    }
+
+    private var isListenAvailable: Bool {
+        if #available(visionOS 26.0, *) { return true } else { return false }
+    }
+
+    private func unavailableView(_ message: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle").font(.largeTitle)
+            Text(message).foregroundStyle(.secondary)
+            Button("Back") { mode = nil }
+        }
+        .padding(40)
     }
 
     private func modeCard(title: String, subtitle: String, detail: String,
