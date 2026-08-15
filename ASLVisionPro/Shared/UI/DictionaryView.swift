@@ -59,7 +59,13 @@ struct DictionaryView: View {
                             Text(category.title)
                             Spacer()
                             Text("\(count)").foregroundStyle(.secondary)
+                            Image(systemName: "chevron.right")
+                                .font(.caption).foregroundStyle(.tertiary)
                         }
+                        // Without an explicit hit shape, a .plain button inside a List row
+                        // only responds on its opaque label content — taps on the row's
+                        // empty space are swallowed. Verified on device: the row did nothing.
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }

@@ -36,8 +36,39 @@ struct ModeSelectionView: View {
         }
     }
 
+    /// Modes as data so the grid stays symmetric and the list is easy to extend.
+    private var modes: [ModeCard] {
+        [
+            ModeCard(mode: .tutor, title: "Tutor", subtitle: "Practice signing",
+                     detail: "Tracks your own hands in 3D and scores each attempt. No special permissions.",
+                     symbol: "hand.raised.fill", available: true),
+            ModeCard(mode: .dictionary, title: "Dictionary", subtitle: "Look up signs",
+                     detail: "Browse signs by category with a full parameter breakdown.",
+                     symbol: "book.fill", available: true),
+            ModeCard(mode: .listen, title: "Listen", subtitle: "Speech to captions",
+                     detail: "Transcribes speech on-device, with optional ASL gloss. Needs visionOS 26.",
+                     symbol: "waveform", available: isListenAvailable),
+            ModeCard(mode: .collect, title: "Collect Data", subtitle: "Record training clips",
+                     detail: "Prompts a sign and records auto-labeled 3D landmarks for training.",
+                     symbol: "record.circle.fill", available: true),
+            ModeCard(mode: .interpret, title: "Interpret", subtitle: "Caption another person",
+                     detail: "Needs Apple's enterprise camera entitlement before it can show captions.",
+                     symbol: "text.bubble.fill", available: false),
+        ]
+    }
+
+    struct ModeCard: Identifiable {
+        let mode: Mode
+        let title: String
+        let subtitle: String
+        let detail: String
+        let symbol: String
+        let available: Bool
+        var id: Mode { mode }
+    }
+
     private var chooser: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 36) {
             VStack(spacing: 8) {
                 Text("ASL Vision Pro")
                     .font(.largeTitle.weight(.semibold))
@@ -45,48 +76,13 @@ struct ModeSelectionView: View {
                     .foregroundStyle(.secondary)
             }
 
-            HStack(spacing: 20) {
-                modeCard(
-                    title: "Tutor",
-                    subtitle: "Practice signing",
-                    detail: "Tracks your own hands in 3D and scores each attempt. Works today — no special permissions.",
-                    systemImage: "hand.raised.fill",
-                    available: true
-                ) { mode = .tutor }
-
-                modeCard(
-                    title: "Dictionary",
-                    subtitle: "Look up signs",
-                    detail: "Browse signs by category with a full parameter breakdown. No camera or model needed.",
-                    systemImage: "book.fill",
-                    available: true
-                ) { mode = .dictionary }
-            }
-
-            HStack(spacing: 20) {
-                modeCard(
-                    title: "Listen",
-                    subtitle: "Speech to captions",
-                    detail: "Transcribes speech on-device, with optional ASL gloss. No camera or model needed — needs visionOS 26.",
-                    systemImage: "waveform",
-                    available: isListenAvailable
-                ) { mode = .listen }
-
-                modeCard(
-                    title: "Collect Data",
-                    subtitle: "Record training clips",
-                    detail: "Prompts a sign, records auto-labeled 3D landmarks. Internal tool for building the dataset.",
-                    systemImage: "record.circle.fill",
-                    available: true
-                ) { mode = .collect }
-
-                modeCard(
-                    title: "Interpret",
-                    subtitle: "Caption another person",
-                    detail: "Needs Apple's enterprise camera entitlement. Runs without captions until that's approved.",
-                    systemImage: "text.bubble.fill",
-                    available: false
-                ) { mode = .interpret }
+            // Fixed 3-column grid: five cards land 3-over-2 and stay aligned, rather than
+            // the ragged 2-then-3 rows an HStack pair produced.
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(260), spacing: 24), count: 3),
+                      spacing: 24) {
+                ForEach(modes) { card in
+                    modeCard(card) { mode = card.mode }
+                }
             }
         }
         .padding(48)
@@ -105,34 +101,38 @@ struct ModeSelectionView: View {
         .padding(40)
     }
 
-    private func modeCard(title: String, subtitle: String, detail: String,
-                          systemImage: String, available: Bool,
-                          action: @escaping () -> Void) -> some View {
+    private func modeCard(_ card: ModeCard, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Image(systemName: systemImage)
-                        .font(.title)
+                    Image(systemName: card.symbol).font(.title2)
                     Spacer()
-                    if !available {
+                    if !card.available {
                         Text("Limited")
                             .font(.caption2.weight(.semibold))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background(.orange.opacity(0.25), in: Capsule())
+                            .background(.orange.opacity(0.3), in: Capsule())
                     }
                 }
-                Text(title).font(.title2.weight(.semibold))
-                Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
-                Text(detail)
+                Text(card.title).font(.title3.weight(.semibold))
+                Text(card.subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(card.detail)
+                    // .secondary rather than .tertiary: against visionOS glass the tertiary
+                    // tier was effectively unreadable over a bright passthrough background.
                     .font(.caption)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
             }
-            .frame(width: 240, height: 200, alignment: .topLeading)
-            .padding(20)
+            .frame(width: 260, height: 190, alignment: .topLeading)
+            .padding(18)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .opacity(card.available ? 1 : 0.75)
     }
 }

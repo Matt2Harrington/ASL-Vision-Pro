@@ -83,6 +83,9 @@ struct ModeSelectionView_iOS: View {
                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
             }
             .padding(.vertical, 4)
+            // Plain buttons in List rows need an explicit hit shape or taps on empty space
+            // are swallowed — same bug found in DictionaryView on device.
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

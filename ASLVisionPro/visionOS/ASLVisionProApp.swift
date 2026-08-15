@@ -11,6 +11,9 @@ struct ASLVisionProApp: App {
             ModeSelectionView()
                 .environment(pipeline)
         }
-        .windowStyle(.plain)
+        // Default (glass) window style, not .plain: .plain removes the system window
+        // background, leaving UI floating directly over passthrough. Verified in the
+        // simulator — text was unreadable against a bright wall and legible only where it
+        // happened to overlap something dark.
     }
 }
