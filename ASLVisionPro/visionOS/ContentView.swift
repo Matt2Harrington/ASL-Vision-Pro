@@ -1,34 +1,37 @@
 import SwiftUI
 
-/// The single, simple screen: the signer in view with live captions beneath, plus a
-/// start/stop control and an "experimental" disclaimer that is intentionally always visible.
+/// Interpret mode: captions for another person signing in front of the wearer.
+///
+/// Gated on Apple's enterprise camera entitlement, so the screen says so up front rather
+/// than sitting silently empty and looking broken. Everything else here is live — the
+/// pipeline runs, and captions appear the moment frames and a model are both available.
 struct ContentView: View {
     @Environment(TranslationPipeline.self) private var pipeline
-    @State private var showDebugOverlay = false
+    @State private var showLandmarks = false
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: Theme.sectionSpacing) {
             header
 
             ZStack {
-                // On Vision Pro the passthrough shows the real person; this view frames the
-                // caption region and (optionally) the landmark debug overlay on top.
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(.black.opacity(0.15))
+                RoundedRectangle(cornerRadius: Theme.cardRadius)
+                    .fill(.regularMaterial)
                     .overlay {
-                        if showDebugOverlay, let frame = pipeline.latestFrame {
+                        if showLandmarks, let frame = pipeline.latestFrame {
                             LandmarkOverlayView(frame: frame)
+                                .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
+                        } else if !pipeline.isRunning {
+                            waitingState
                         }
                     }
                     .overlay(alignment: .bottom) {
-                        CaptionView(text: pipeline.caption)
-                            .padding(24)
+                        CaptionView(text: pipeline.caption).padding(20)
                     }
             }
-            .frame(minWidth: 720, minHeight: 480)
+            .frame(minWidth: 700, minHeight: 380)
 
             controls
-            disclaimer
+            ExperimentalNote()
         }
         .padding(32)
         .onAppear { pipeline.start() }
@@ -36,30 +39,57 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        Text("ASL Vision Pro")
-            .font(.largeTitle.weight(.semibold))
-    }
-
-    private var controls: some View {
-        HStack(spacing: 16) {
-            Button(pipeline.isRunning ? "Stop" : "Start") {
-                pipeline.isRunning ? pipeline.stop() : pipeline.start()
+        HStack(spacing: 14) {
+            IconBadge(symbol: "text.bubble.fill", tint: Theme.Accent.interpret, size: 46)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Interpret").font(.title2.weight(.semibold))
+                Text(pipeline.isRunning ? "Watching for signing" : "Camera unavailable")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
-            .buttonStyle(.borderedProminent)
-
-            Toggle("Show landmarks", isOn: $showDebugOverlay)
-                .toggleStyle(.button)
-
-            Label(pipeline.isRunning ? "Live" : "Paused",
-                  systemImage: pipeline.isRunning ? "dot.radiowaves.left.and.right" : "pause.circle")
-                .foregroundStyle(pipeline.isRunning ? .green : .secondary)
+            Spacer()
+            if pipeline.isRunning {
+                Label("Live", systemImage: "dot.radiowaves.left.and.right")
+                    .font(.caption)
+                    .foregroundStyle(.green)
+            }
         }
     }
 
-    private var disclaimer: some View {
-        Text("Experimental — recognition may be wrong. Do not rely on it for critical communication.")
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-            .multilineTextAlignment(.center)
+    /// Shown instead of a blank panel when no frames are arriving — almost always the
+    /// missing entitlement, so it names that rather than leaving the user guessing.
+    private var waitingState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "video.slash")
+                .font(.system(size: 40))
+                .foregroundStyle(.secondary)
+            Text("No camera feed")
+                .font(.title3.weight(.medium))
+            Text("Interpret needs Apple's enterprise main-camera entitlement before it can see another person.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 420)
+        }
+        .padding(30)
+    }
+
+    private var controls: some View {
+        HStack(spacing: 14) {
+            Button {
+                pipeline.isRunning ? pipeline.stop() : pipeline.start()
+            } label: {
+                Label(pipeline.isRunning ? "Stop" : "Start",
+                      systemImage: pipeline.isRunning ? "stop.fill" : "play.fill")
+                    .frame(minWidth: 120)
+            }
+            .buttonStyle(.borderedProminent)
+
+            Toggle(isOn: $showLandmarks) {
+                Label("Landmarks", systemImage: "point.3.connected.trianglepath.dotted")
+            }
+            .toggleStyle(.button)
+        }
+        .controlSize(.large)
     }
 }

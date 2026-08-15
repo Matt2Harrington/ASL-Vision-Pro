@@ -10,7 +10,10 @@ import SwiftUI
 struct ModeSelectionView_iOS: View {
     @State private var mode: Mode?
 
-    enum Mode: Hashable { case tutor, interpret, dictionary, collect, listen }
+    enum Mode: Hashable, Identifiable {
+        case tutor, interpret, dictionary, collect, listen
+        var id: Self { self }
+    }
 
     private var starterLesson: [String] {
         let lesson = SignCatalog.shared.entries.prefix(10).map(\.gloss)
@@ -42,52 +45,92 @@ struct ModeSelectionView_iOS: View {
 
     private var chooser: some View {
         NavigationStack {
-            List {
-                Section {
-                    row("Tutor", "Practice signing with camera feedback", "hand.raised.fill") { mode = .tutor }
-                    row("Dictionary", "Browse signs and their parameters", "book.fill") { mode = .dictionary }
-                    if isListenAvailable {
-                        row("Listen", "Live speech captions with ASL gloss", "waveform") { mode = .listen }
-                    }
-                } header: {
-                    Text("Available now")
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.sectionSpacing) {
+                    ScreenHeader(title: "ASL Vision Pro",
+                                 subtitle: "Learn, look up, and follow along — all on device")
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 4)
 
-                Section {
-                    row("Interpret", "Caption someone else signing", "text.bubble.fill") { mode = .interpret }
-                    row("Collect Data", "Record labeled training clips", "record.circle.fill") { mode = .collect }
-                } header: {
-                    Text("Experimental")
-                } footer: {
-                    Text("Interpret and Collect need a trained model to produce results. Camera landmarks are 2D, so recognition is weaker than on Vision Pro.")
+                    section("Start here", items: primaryModes)
+                    section("More", items: secondaryModes)
+                }
+                .padding(24)
+            }
+        }
+    }
+
+    private func section(_ title: String, items: [ModeInfo]) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: title)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Theme.itemSpacing)],
+                      spacing: Theme.itemSpacing) {
+                ForEach(items) { info in
+                    CardButton { mode = info.mode } content: {
+                        VStack(alignment: .leading, spacing: 10) {
+                            IconBadge(symbol: info.symbol, tint: info.tint)
+                            Text(info.title).font(.title3.weight(.semibold))
+                            Text(info.summary)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let note = info.note {
+                                Label(note, systemImage: "info.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.top, 2)
+                            }
+                        }
+                    }
                 }
             }
-            .navigationTitle("ASL Vision Pro")
         }
+    }
+
+    struct ModeInfo: Identifiable {
+        let mode: Mode
+        let title: String
+        let summary: String
+        let symbol: String
+        let tint: Color
+        var note: String? = nil
+        var id: Mode { mode }
+    }
+
+    /// Works right now — no model, no entitlement.
+    private var primaryModes: [ModeInfo] {
+        var modes = [
+            ModeInfo(mode: .tutor, title: "Practice",
+                     summary: "Sign along and get feedback on every attempt.",
+                     symbol: "hand.raised.fill", tint: Theme.Accent.practice),
+            ModeInfo(mode: .dictionary, title: "Dictionary",
+                     summary: "Look up any sign and see how it's formed.",
+                     symbol: "book.fill", tint: Theme.Accent.dictionary),
+        ]
+        if isListenAvailable {
+            modes.append(ModeInfo(mode: .listen, title: "Listen",
+                                  summary: "Turn nearby speech into live captions.",
+                                  symbol: "waveform", tint: Theme.Accent.listen))
+        }
+        return modes
+    }
+
+    /// Gated or internal — demoted, with the reason stated up front.
+    private var secondaryModes: [ModeInfo] {
+        [
+            ModeInfo(mode: .interpret, title: "Interpret",
+                     summary: "Caption someone else signing to you.",
+                     symbol: "text.bubble.fill", tint: Theme.Accent.interpret,
+                     note: "Needs a trained model"),
+            ModeInfo(mode: .collect, title: "Record Clips",
+                     summary: "Build training data for the recognizer.",
+                     symbol: "record.circle.fill", tint: Theme.Accent.collect,
+                     note: "For development"),
+        ]
     }
 
     private var isListenAvailable: Bool {
         if #available(iOS 26.0, *) { return true } else { return false }
-    }
-
-    private func row(_ title: String, _ subtitle: String, _ symbol: String,
-                     action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                Image(systemName: symbol).font(.title3).frame(width: 30)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.headline)
-                    Text(subtitle).font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
-            }
-            .padding(.vertical, 4)
-            // Plain buttons in List rows need an explicit hit shape or taps on empty space
-            // are swallowed — same bug found in DictionaryView on device.
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 
     private func unavailable(_ message: String) -> some View {
