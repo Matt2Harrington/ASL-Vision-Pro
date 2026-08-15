@@ -6,7 +6,7 @@ import SwiftUI
 struct ASLVisionProApp_iOS: App {
     var body: some Scene {
         WindowGroup {
-            ContentView_iOS()
+            ModeSelectionView_iOS()
         }
     }
 }

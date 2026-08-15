@@ -8,8 +8,11 @@ struct TutorView: View {
 
     init(lesson: [String]) {
         // visionOS drives the tutor from the wearer's own 3D hand joints — no entitlement.
+        // The verifier comes from the shared factory so a bundled model is picked up
+        // automatically, same as the recognizer.
         _session = State(initialValue: TutorSession(lesson: lesson,
-                                                     source: HandTrackingSource()))
+                                                     source: HandTrackingSource(),
+                                                     verifier: RecognizerFactory.makeVerifier()))
     }
 
     var body: some View {

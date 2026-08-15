@@ -51,6 +51,22 @@ enum RecognizerFactory {
         return ContinuousSignRecognizer(model: model, vocab: vocab)
     }
 
+    // MARK: - Tutor verification
+
+    /// Verifier for tutor mode. Reuses the same bundled classifier as recognition — the
+    /// tutor just reads the probability of the *expected* class instead of the argmax.
+    /// Without this, `CoreMLSignVerifier` would be unreachable and tutor mode would stay on
+    /// the stub even after a model shipped.
+    static func makeVerifier() -> SignVerifying {
+        guard let model = loadModel(named: "SignModel"),
+              let labels = loadStrings(resource: "labels") else {
+            log.notice("No bundled model found — falling back to StubSignVerifier.")
+            return StubSignVerifier()
+        }
+        log.info("Using CoreMLSignVerifier with \(labels.count) classes.")
+        return CoreMLSignVerifier(model: model, labels: labels)
+    }
+
     // MARK: - Fallback
 
     private static func fallback() -> SignRecognizing {
