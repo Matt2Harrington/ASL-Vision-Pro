@@ -13,7 +13,8 @@ enum FeatureEncoder {
     static let handPoints = 21                     // feature_spec: points.left_hand / right_hand
     static let bodyPoints = 8                      // feature_spec: points.body
     static let facePoints = 16                     // feature_spec: points.face
-    static var featuresPerFrame: Int { (handPoints * 2 + bodyPoints + facePoints) * 2 } // = 132
+    static let coordsPerPoint = 3                  // feature_spec: coords_per_point (x, y, z)
+    static var featuresPerFrame: Int { (handPoints * 2 + bodyPoints + facePoints) * coordsPerPoint } // = 198
 
     /// Fixed-window encoder for the isolated-sign classifier (Levels 1–2). Produces
     /// `"landmarks"` of shape [1, sequenceLength, featuresPerFrame].
@@ -41,17 +42,29 @@ enum FeatureEncoder {
         return try? MLDictionaryFeatureProvider(dictionary: ["landmarks": MLFeatureValue(multiArray: array)])
     }
 
-    /// Flatten one frame into a normalized [x0,y0,x1,y1,...] vector, centered on the torso
-    /// and scaled by shoulder width so recognition is invariant to signer distance/position.
+    /// Same normalization as `encode`, returned as a plain `[sequenceLength][featuresPerFrame]`
+    /// matrix instead of an MLMultiArray. Used by `DataCollector` to export training clips —
+    /// going through this shared path is what guarantees the recorded features are byte-for-byte
+    /// what the model will see at inference (MODEL_PLAN §2).
+    static func encodeMatrix(_ window: SignSegmenter.Window) -> [[Float]]? {
+        guard !window.frames.isEmpty else { return nil }
+        return padOrTrim(window.frames, to: sequenceLength).map(flatten)
+    }
+
+    /// Flatten one frame into a normalized [x0,y0,z0,x1,y1,z1,...] vector, centered on the
+    /// torso and scaled by shoulder width so recognition is invariant to signer
+    /// distance/position. `z` is 0 for 2D sources and a real depth for hand tracking.
     private static func flatten(_ frame: SignFrame) -> [Float] {
         let anchor = frame.body.first?.position ?? CGPoint(x: 0.5, y: 0.5)
+        let anchorZ = frame.body.first?.z ?? 0
         let scale = shoulderScale(frame)
 
         func encode(_ points: [Landmark], count: Int) -> [Float] {
-            var out = [Float](repeating: 0, count: count * 2)
+            var out = [Float](repeating: 0, count: count * coordsPerPoint)
             for (i, lm) in points.prefix(count).enumerated() {
-                out[i * 2]     = Float((lm.position.x - anchor.x) / scale)
-                out[i * 2 + 1] = Float((lm.position.y - anchor.y) / scale)
+                out[i * coordsPerPoint]     = Float((lm.position.x - anchor.x) / scale)
+                out[i * coordsPerPoint + 1] = Float((lm.position.y - anchor.y) / scale)
+                out[i * coordsPerPoint + 2] = (lm.z - anchorZ) / Float(scale)
             }
             return out
         }

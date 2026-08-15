@@ -8,7 +8,7 @@ struct ASLVisionProApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ModeSelectionView()
                 .environment(pipeline)
         }
         .windowStyle(.plain)

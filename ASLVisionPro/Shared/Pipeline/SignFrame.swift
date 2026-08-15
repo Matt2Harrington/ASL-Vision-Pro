@@ -21,9 +21,21 @@ struct SignFrame {
 }
 
 /// One normalized landmark with a detection confidence.
+///
+/// `z` is depth: 0 for 2D camera sources (Vision returns no depth), and a real value for
+/// ARKit hand tracking, which reports true 3D joints. Depth materially helps recognition —
+/// handshapes that project identically in 2D (a fist toward vs. away from the camera) are
+/// trivially separable in 3D. See ALTERNATIVE_DIRECTIONS.md.
 struct Landmark {
-    let position: CGPoint   // normalized [0,1]
+    let position: CGPoint   // normalized [0,1] in image space (or projected plane for 3D sources)
+    let z: Float            // depth relative to the normalization anchor; 0 when unavailable
     let confidence: Float   // [0,1]
+
+    init(position: CGPoint, z: Float = 0, confidence: Float) {
+        self.position = position
+        self.z = z
+        self.confidence = confidence
+    }
 }
 
 /// A recognized unit emitted by the recognizer: a fingerspelled letter, an isolated
