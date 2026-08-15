@@ -35,16 +35,26 @@ final class DataCollector {
     private var streamTask: Task<Void, Never>?
 
     /// Seconds of landmarks captured per clip. Long enough for a full sign with margin.
-    private let clipDuration: TimeInterval = 2.0
+    /// Injectable so tests don't have to wait out a real recording.
+    private let clipDuration: TimeInterval
+    /// Where clips are appended. Injectable so tests write to a temp file instead of the
+    /// user's Documents directory.
+    let outputURL: URL
 
     var progress: Double {
         prompts.isEmpty ? 0 : Double(promptIndex) / Double(prompts.count)
     }
 
-    init(prompts: [String], source: SignFrameSource, signerID: String) {
+    init(prompts: [String],
+         source: SignFrameSource,
+         signerID: String,
+         outputURL: URL = DataCollector.recordingsURL(),
+         clipDuration: TimeInterval = 2.0) {
         self.prompts = prompts
         self.source = source
         self.signerID = signerID
+        self.outputURL = outputURL
+        self.clipDuration = clipDuration
         self.currentPrompt = prompts.first
     }
 
@@ -82,15 +92,21 @@ final class DataCollector {
     /// Skip the current prompt without recording.
     func skip() { advance() }
 
+    /// A clip must contain at least one full model window, or it can't be encoded.
+    static func isClipLongEnough(_ frames: [SignFrame]) -> Bool {
+        frames.count >= FeatureEncoder.sequenceLength
+    }
+
     private func finishClip(gloss: String) {
         let frames = buffer
         buffer.removeAll()
-        guard frames.count >= FeatureEncoder.sequenceLength else {
+        guard Self.isClipLongEnough(frames) else {
             log.notice("Clip for \(gloss) too short (\(frames.count) frames) — discarded.")
             return
         }
         do {
-            try Self.appendRecording(gloss: gloss, signerID: signerID, frames: frames)
+            try Self.appendRecording(gloss: gloss, signerID: signerID,
+                                     frames: frames, to: outputURL)
             clipsRecorded += 1
             counts[gloss, default: 0] += 1
             advance()
@@ -109,8 +125,8 @@ final class DataCollector {
 
     /// One JSON object per line: {gloss, signer, features: [[Float]]}.
     /// Features are produced by `FeatureEncoder`, guaranteeing parity with inference.
-    private static func appendRecording(gloss: String, signerID: String,
-                                        frames: [SignFrame]) throws {
+    static func appendRecording(gloss: String, signerID: String,
+                                frames: [SignFrame], to url: URL) throws {
         let window = SignSegmenter.Window(frames: frames)
         guard let matrix = FeatureEncoder.encodeMatrix(window) else {
             throw CollectorError.encodingFailed
@@ -118,7 +134,6 @@ final class DataCollector {
         let record = Recording(gloss: gloss, signer: signerID, features: matrix)
         let data = try JSONEncoder().encode(record)
 
-        let url = recordingsURL()
         let handle: FileHandle
         if FileManager.default.fileExists(atPath: url.path) {
             handle = try FileHandle(forWritingTo: url)
@@ -133,12 +148,14 @@ final class DataCollector {
     }
 
     /// Written to Documents so it's reachable via the Files app / device container.
-    static func recordingsURL() -> URL {
+    /// `nonisolated` because it touches no actor state and is used as a default argument,
+    /// which Swift evaluates outside the main actor.
+    nonisolated static func recordingsURL() -> URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("recordings.jsonl")
     }
 
-    private struct Recording: Codable {
+    struct Recording: Codable {
         let gloss: String
         let signer: String
         let features: [[Float]]   // [sequenceLength][featuresPerFrame]
