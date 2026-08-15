@@ -49,7 +49,7 @@ final class SpeechListener {
         }
 
         do {
-            try await configure()
+            try configure()
             isListening = true
         } catch {
             log.error("Speech start failed: \(error.localizedDescription)")

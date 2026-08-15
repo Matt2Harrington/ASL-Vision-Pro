@@ -1,11 +1,20 @@
 import SwiftUI
 
-/// Entry screen. The two modes have very different requirements, and the UI says so plainly
-/// rather than letting the user discover it via a failed camera authorization.
+/// visionOS home. Designed to be understood at a glance and driven with one look-and-pinch:
+///
+///  • Modes that work right now come first and are visually dominant; anything gated is
+///    demoted and labelled, so nobody walks into a dead end wondering why nothing happens.
+///  • Cards are large and generously spaced — comfortable gaze targets matter far more on
+///    visionOS than information density.
+///  • One accent colour per mode gives each a stable identity you can find by shape and hue
+///    instead of re-reading every label.
 struct ModeSelectionView: View {
     @State private var mode: Mode?
 
-    enum Mode: Hashable { case tutor, interpret, dictionary, collect, listen }
+    enum Mode: Hashable, Identifiable {
+        case tutor, dictionary, listen, collect, interpret
+        var id: Self { self }
+    }
 
     /// Lessons come from the shared catalog, so content and practice never drift apart.
     private var starterLesson: [String] {
@@ -15,124 +24,158 @@ struct ModeSelectionView: View {
 
     var body: some View {
         switch mode {
-        case .tutor:
-            TutorView(lesson: starterLesson)
-        case .interpret:
-            ContentView()
+        case .tutor:      TutorView(lesson: starterLesson)
+        case .dictionary: DictionaryView()
         case .listen:
-            if #available(visionOS 26.0, *) {
-                ListenView()
-            } else {
-                unavailableView("Listen mode needs visionOS 26 or newer.")
-            }
-        case .dictionary:
-            DictionaryView()
+            if #available(visionOS 26.0, *) { ListenView() }
+            else { unavailable("Listen needs visionOS 26 or newer.") }
         case .collect:
             DataCollectorView(prompts: SignCatalog.shared.entries.map(\.gloss),
                               source: HandTrackingSource(),
                               signerID: "signer-1")
-        case nil:
-            chooser
+        case .interpret:  ContentView()
+        case nil:         home
         }
     }
 
-    /// Modes as data so the grid stays symmetric and the list is easy to extend.
-    private var modes: [ModeCard] {
-        [
-            ModeCard(mode: .tutor, title: "Tutor", subtitle: "Practice signing",
-                     detail: "Tracks your own hands in 3D and scores each attempt. No special permissions.",
-                     symbol: "hand.raised.fill", available: true),
-            ModeCard(mode: .dictionary, title: "Dictionary", subtitle: "Look up signs",
-                     detail: "Browse signs by category with a full parameter breakdown.",
-                     symbol: "book.fill", available: true),
-            ModeCard(mode: .listen, title: "Listen", subtitle: "Speech to captions",
-                     detail: "Transcribes speech on-device, with optional ASL gloss. Needs visionOS 26.",
-                     symbol: "waveform", available: isListenAvailable),
-            ModeCard(mode: .collect, title: "Collect Data", subtitle: "Record training clips",
-                     detail: "Prompts a sign and records auto-labeled 3D landmarks for training.",
-                     symbol: "record.circle.fill", available: true),
-            ModeCard(mode: .interpret, title: "Interpret", subtitle: "Caption another person",
-                     detail: "Needs Apple's enterprise camera entitlement before it can show captions.",
-                     symbol: "text.bubble.fill", available: false),
-        ]
+    // MARK: - Home
+
+    private var home: some View {
+        VStack(spacing: 0) {
+            header
+            ScrollView {
+                VStack(alignment: .leading, spacing: 26) {
+                    section("Start here", items: primaryModes, prominent: true)
+                    section("More", items: secondaryModes, prominent: false)
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 24)
+            }
+        }
+        .padding(40)
+        .frame(minWidth: 960)
     }
 
-    struct ModeCard: Identifiable {
+    private var header: some View {
+        VStack(spacing: 6) {
+            Text("ASL Vision Pro")
+                .font(.system(size: 40, weight: .semibold, design: .rounded))
+            Text("Learn, look up, and follow along — all on device")
+                .font(.title3)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.bottom, 28)
+    }
+
+    private func section(_ title: String, items: [ModeInfo], prominent: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(.secondary)
+                .padding(.leading, 4)
+
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.flexible(), spacing: 20),
+                               count: prominent ? 3 : 2),
+                spacing: 20
+            ) {
+                ForEach(items) { card(for: $0, prominent: prominent) }
+            }
+        }
+    }
+
+    // MARK: - Card
+
+    private func card(for info: ModeInfo, prominent: Bool) -> some View {
+        Button { mode = info.mode } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack {
+                    Circle()
+                        .fill(info.tint.opacity(0.22))
+                        .frame(width: prominent ? 54 : 46, height: prominent ? 54 : 46)
+                    Image(systemName: info.symbol)
+                        .font(.system(size: prominent ? 24 : 20, weight: .medium))
+                        .foregroundStyle(info.tint)
+                }
+                .padding(.bottom, prominent ? 14 : 12)
+
+                Text(info.title)
+                    .font(prominent ? .title2.weight(.semibold) : .title3.weight(.semibold))
+                Text(info.summary)
+                    .font(prominent ? .body : .callout)
+                    .foregroundStyle(.secondary)
+                    .padding(.top, 4)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: 12)
+
+                if let note = info.note {
+                    Label(note, systemImage: "info.circle")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: prominent ? 198 : 150)
+            .padding(prominent ? 22 : 20)
+            // Explicit hit shape: plain buttons otherwise only respond on opaque content.
+            .contentShape(RoundedRectangle(cornerRadius: 28))
+        }
+        .buttonStyle(.plain)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 28))
+        .hoverEffect()   // gaze feedback — the primary affordance on visionOS
+    }
+
+    private func unavailable(_ message: String) -> some View {
+        VStack(spacing: 18) {
+            Image(systemName: "exclamationmark.triangle").font(.system(size: 44))
+            Text(message).font(.title3).foregroundStyle(.secondary)
+            Button("Back") { mode = nil }.buttonStyle(.borderedProminent)
+        }
+        .padding(50)
+    }
+
+    // MARK: - Content
+
+    struct ModeInfo: Identifiable {
         let mode: Mode
         let title: String
-        let subtitle: String
-        let detail: String
+        let summary: String
         let symbol: String
-        let available: Bool
+        let tint: Color
+        var note: String? = nil
         var id: Mode { mode }
     }
 
-    private var chooser: some View {
-        VStack(spacing: 36) {
-            VStack(spacing: 8) {
-                Text("ASL Vision Pro")
-                    .font(.largeTitle.weight(.semibold))
-                Text("Choose a mode")
-                    .foregroundStyle(.secondary)
-            }
-
-            // Fixed 3-column grid: five cards land 3-over-2 and stay aligned, rather than
-            // the ragged 2-then-3 rows an HStack pair produced.
-            LazyVGrid(columns: Array(repeating: GridItem(.fixed(260), spacing: 24), count: 3),
-                      spacing: 24) {
-                ForEach(modes) { card in
-                    modeCard(card) { mode = card.mode }
-                }
-            }
+    /// Works right now — no model, no entitlement.
+    private var primaryModes: [ModeInfo] {
+        var modes = [
+            ModeInfo(mode: .tutor, title: "Practice",
+                     summary: "Sign along and get feedback on every attempt.",
+                     symbol: "hand.raised.fill", tint: .blue),
+            ModeInfo(mode: .dictionary, title: "Dictionary",
+                     summary: "Look up any sign and see how it's formed.",
+                     symbol: "book.fill", tint: .purple),
+        ]
+        if #available(visionOS 26.0, *) {
+            modes.append(ModeInfo(mode: .listen, title: "Listen",
+                                  summary: "Turn nearby speech into live captions.",
+                                  symbol: "waveform", tint: .teal))
         }
-        .padding(48)
+        return modes
     }
 
-    private var isListenAvailable: Bool {
-        if #available(visionOS 26.0, *) { return true } else { return false }
-    }
-
-    private func unavailableView(_ message: String) -> some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle").font(.largeTitle)
-            Text(message).foregroundStyle(.secondary)
-            Button("Back") { mode = nil }
-        }
-        .padding(40)
-    }
-
-    private func modeCard(_ card: ModeCard, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Image(systemName: card.symbol).font(.title2)
-                    Spacer()
-                    if !card.available {
-                        Text("Limited")
-                            .font(.caption2.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(.orange.opacity(0.3), in: Capsule())
-                    }
-                }
-                Text(card.title).font(.title3.weight(.semibold))
-                Text(card.subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text(card.detail)
-                    // .secondary rather than .tertiary: against visionOS glass the tertiary
-                    // tier was effectively unreadable over a bright passthrough background.
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }
-            .frame(width: 260, height: 190, alignment: .topLeading)
-            .padding(18)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .opacity(card.available ? 1 : 0.75)
+    /// Gated or internal — demoted, with the reason stated up front.
+    private var secondaryModes: [ModeInfo] {
+        [
+            ModeInfo(mode: .interpret, title: "Interpret",
+                     summary: "Caption someone else signing to you.",
+                     symbol: "text.bubble.fill", tint: .orange,
+                     note: "Needs Apple's camera entitlement"),
+            ModeInfo(mode: .collect, title: "Record Clips",
+                     summary: "Build training data for the recognizer.",
+                     symbol: "record.circle.fill", tint: .pink,
+                     note: "For development"),
+        ]
     }
 }

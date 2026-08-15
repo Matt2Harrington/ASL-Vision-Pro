@@ -29,6 +29,10 @@ struct SourceFrame {
 ///
 /// Tutor/practice features depend on this protocol rather than a concrete type, so they stay
 /// platform-neutral and testable.
+/// `@MainActor`: every implementation is main-actor bound (ARKit session, AVFoundation
+/// session) and feeds @MainActor UI state. Leaving the protocol nonisolated made the
+/// conformance cross actor boundaries, which is a hard error in Swift 6.
+@MainActor
 protocol SignFrameSource: AnyObject {
     func signFrames() -> AsyncStream<SignFrame>
     func stop()
@@ -37,6 +41,7 @@ protocol SignFrameSource: AnyObject {
 /// Adapts a pixel-buffer `FrameSource` into a `SignFrameSource` by running the landmark
 /// extractor. Lets camera-based platforms (iPhone today) drive tutor mode with the same
 /// session logic the headset uses.
+@MainActor
 final class CameraSignFrameSource: SignFrameSource {
     private let source: FrameSource
     private let extractor = LandmarkExtractor()
