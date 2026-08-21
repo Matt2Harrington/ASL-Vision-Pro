@@ -119,6 +119,23 @@ struct ScreenHeader: View {
     }
 }
 
+/// Shown whenever no trained model is bundled, so simulated output is never mistaken for
+/// recognition. Deliberately prominent rather than a footnote.
+struct SimulatedBanner: View {
+    var message = "No trained model — feedback is simulated and unrelated to your signing."
+
+    var body: some View {
+        Label(message, systemImage: "exclamationmark.triangle.fill")
+            .font(.callout.weight(.medium))
+            .foregroundStyle(.orange)
+            .multilineTextAlignment(.leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: Theme.innerRadius))
+    }
+}
+
 /// Always-visible honesty label. Recognition can be wrong, and every screen that shows
 /// recognized output carries this rather than relying on the user to remember.
 struct ExperimentalNote: View {

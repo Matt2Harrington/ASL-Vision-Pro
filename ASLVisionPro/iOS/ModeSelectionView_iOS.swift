@@ -167,6 +167,11 @@ struct TutorView_iOS: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 16) {
+                if !RecognizerFactory.hasBundledModel {
+                    SimulatedBanner()
+                        .padding(.horizontal, 20)
+                }
+
                 if let target = session.currentTarget {
                     VStack(spacing: 6) {
                         Text("Sign this").font(.caption).foregroundStyle(.white.opacity(0.8))

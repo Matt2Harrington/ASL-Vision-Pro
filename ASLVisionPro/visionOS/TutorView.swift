@@ -19,6 +19,10 @@ struct TutorView: View {
         VStack(spacing: 0) {
             progressBar
 
+            if !RecognizerFactory.hasBundledModel {
+                SimulatedBanner().padding(.bottom, 18)
+            }
+
             if let target = session.currentTarget {
                 practice(target)
             } else {

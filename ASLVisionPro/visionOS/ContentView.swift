@@ -33,6 +33,9 @@ struct ContentView: View {
             }
             .frame(minWidth: 700, minHeight: 380)
 
+            if !RecognizerFactory.hasBundledModel {
+                SimulatedBanner(message: "No trained model — captions will not reflect real signing.")
+            }
             controls
             ExperimentalNote()
         }
