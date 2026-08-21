@@ -27,8 +27,11 @@ __pycache__/
 # Training artifacts (large / regenerable)
 training/data/*.npz
 ckpt*.pt
-*.mlpackage
 *.mlmodelc
+
+# The shipped model IS committed — it's 900 KB and the app is inert without it.
+# Intermediate models produced during training are not.
+training/*.mlpackage
 
 # Enterprise license — NEVER commit; issued per-team by Apple
 Enterprise.license

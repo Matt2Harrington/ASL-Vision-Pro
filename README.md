@@ -55,9 +55,13 @@ differ.
 Requires Xcode 26+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```bash
+export DEVELOPMENT_TEAM=XXXXXXXXXX   # your Apple Team ID; omit for simulator-only
 xcodegen generate
 open ASLVisionPro.xcodeproj
 ```
+
+**Setting up from scratch?** [SETUP.md](SETUP.md) walks through it step by step, including
+signing to a physical iPhone and the failures worth knowing about in advance.
 
 Schemes: **ASLVisionPro** (visionOS) · **ASLVisionPro-iOS** · **ASLVisionProTests** (85 tests).
 
@@ -104,6 +108,7 @@ Two structural decisions worth preserving:
 
 | Doc | What it covers |
 |---|---|
+| [SETUP.md](SETUP.md) | Step-by-step: clone → build → run on your own iPhone |
 | [TRAINING_GUIDE.md](TRAINING_GUIDE.md) | How the model was trained, where data lives, how to improve it |
 | [ML_PLAYBOOK.md](ML_PLAYBOOK.md) | Reusable procedure for any on-device model + local LLM |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System design and the capability ladder |
