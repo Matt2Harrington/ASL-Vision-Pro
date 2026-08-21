@@ -25,7 +25,10 @@ struct ContentView: View {
                         }
                     }
                     .overlay(alignment: .bottom) {
-                        CaptionView(text: pipeline.caption).padding(20)
+                        CaptionView(text: pipeline.caption,
+                                    translation: pipeline.translation,
+                                    isTranslating: pipeline.isTranslating)
+                            .padding(20)
                     }
             }
             .frame(minWidth: 700, minHeight: 380)

@@ -21,7 +21,9 @@ struct ContentView_iOS: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 12) {
-                CaptionView(text: pipeline.caption)
+                CaptionView(text: pipeline.caption,
+                            translation: pipeline.translation,
+                            isTranslating: pipeline.isTranslating)
                 Text("Experimental — recognition may be wrong. Do not rely on it for critical communication.")
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.85))
