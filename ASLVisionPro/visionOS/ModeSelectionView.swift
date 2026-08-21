@@ -12,7 +12,7 @@ struct ModeSelectionView: View {
     @State private var mode: Mode?
 
     enum Mode: Hashable, Identifiable {
-        case tutor, dictionary, listen, collect, interpret
+        case tutor, dictionary, listen, collect, interpret, translationCheck
         var id: Self { self }
     }
 
@@ -34,6 +34,7 @@ struct ModeSelectionView: View {
                               source: HandTrackingSource(),
                               signerID: "signer-1")
         case .interpret:  ContentView()
+        case .translationCheck: NavigationStack { TranslationCheckView() }
         case nil:         home
         }
     }
@@ -175,6 +176,10 @@ struct ModeSelectionView: View {
             ModeInfo(mode: .collect, title: "Record Clips",
                      summary: "Build training data for the recognizer.",
                      symbol: "record.circle.fill", tint: .pink,
+                     note: "For development"),
+            ModeInfo(mode: .translationCheck, title: "Translation Check",
+                     summary: "See how the on-device model turns glosses into English.",
+                     symbol: "brain", tint: .teal,
                      note: "For development"),
         ]
     }

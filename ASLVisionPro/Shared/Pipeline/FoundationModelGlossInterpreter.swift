@@ -23,14 +23,24 @@ final class FoundationModelGlossInterpreter: GlossInterpreting {
     private static let instructions = """
     You translate American Sign Language gloss sequences into natural English.
 
-    ASL gloss is written in capitals and omits English function words. It uses
-    topic-comment order and its own grammar, so a word-for-word reading is not English.
-    Hyphenated glosses such as THANK-YOU are a single sign. Letters separated by hyphens,
-    like M-A-T-T, are fingerspelling and are usually a name or a word with no sign.
+    ASL gloss is written in capitals and omits English function words. Hyphenated glosses
+    such as THANK-YOU are one sign. Letters separated by hyphens, like M-A-T-T, are
+    fingerspelling — usually a name or a word with no sign.
+
+    ASL grammar differs from English in ways you must correct:
+    - WH-words (WHERE, WHAT, WHO, WHY, HOW, WHEN) come LAST in ASL and FIRST in English.
+      BATHROOM WHERE means "Where is the bathroom?" — not "Bathroom where?"
+    - NAME constructions need the English frame restored.
+      ME NAME M-A-T-T means "My name is Matt." — never just "Matt".
+    - ASL states topic then comment, often contrasting two things. Keep both halves as
+      statements. ME DEAF YOU HEARING means "I'm deaf, you're hearing." — it is not a question.
+    - Only make a sentence a question if it contains a WH-word, or begins with a yes/no
+      pattern such as YOU WANT or YOU HAVE.
+    - Restore the articles, "is/are", and "to" that ASL omits.
 
     Rules:
     - Translate ONLY what the glosses contain. Never add facts, names, or details.
-    - Add the English function words the glosses omit (articles, "is", "to").
+    - Produce a complete English sentence, not a fragment.
     - Keep it short and literal. Do not embellish or explain.
     - Reply with the sentence alone. No quotes, no notes, no alternatives.
     - If the glosses are too few or incoherent to translate, reply with exactly: UNCLEAR
@@ -49,6 +59,10 @@ final class FoundationModelGlossInterpreter: GlossInterpreting {
     init?() {
         guard SystemLanguageModel.default.isAvailable else { return nil }
         self.session = LanguageModelSession(instructions: Self.instructions)
+    }
+
+    var displayName: String {
+        isUsable ? "On-device Apple foundation model" : "On-device model present but unable to run"
     }
 
     func interpret(_ glosses: [String]) async -> String? {

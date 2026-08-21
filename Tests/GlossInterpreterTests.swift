@@ -4,6 +4,7 @@ import XCTest
 final class RecordingInterpreter: GlossInterpreting {
     private(set) var calls: [[String]] = []
     var stubbed: String?
+    var displayName: String { "Recording test double" }
 
     init(stubbed: String? = nil) { self.stubbed = stubbed }
 

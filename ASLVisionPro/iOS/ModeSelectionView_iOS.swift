@@ -11,7 +11,7 @@ struct ModeSelectionView_iOS: View {
     @State private var mode: Mode?
 
     enum Mode: Hashable, Identifiable {
-        case tutor, interpret, dictionary, collect, listen
+        case tutor, interpret, dictionary, collect, listen, translationCheck
         var id: Self { self }
     }
 
@@ -38,6 +38,8 @@ struct ModeSelectionView_iOS: View {
             DataCollectorView(prompts: SignCatalog.shared.entries.map(\.gloss),
                               source: CameraSignFrameSource(source: iPhoneCameraSource()),
                               signerID: "signer-1")
+        case .translationCheck:
+            NavigationStack { TranslationCheckView() }
         case nil:
             chooser
         }
@@ -125,6 +127,10 @@ struct ModeSelectionView_iOS: View {
             ModeInfo(mode: .collect, title: "Record Clips",
                      summary: "Build training data for the recognizer.",
                      symbol: "record.circle.fill", tint: Theme.Accent.collect,
+                     note: "For development"),
+            ModeInfo(mode: .translationCheck, title: "Translation Check",
+                     summary: "See how the on-device model turns glosses into English.",
+                     symbol: "brain", tint: Theme.Accent.listen,
                      note: "For development"),
         ]
     }

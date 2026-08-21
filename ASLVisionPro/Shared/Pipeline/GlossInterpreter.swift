@@ -17,11 +17,16 @@ import OSLog
 protocol GlossInterpreting: AnyObject {
     /// Returns fluent English for the gloss sequence, or nil if it can't produce one.
     func interpret(_ glosses: [String]) async -> String?
+    /// Human-readable description of what's actually running, so the UI can distinguish a
+    /// real translation from a passthrough that merely looks like one.
+    var displayName: String { get }
 }
 
 /// Fallback used when no language model is available: joins the glosses as-is. This is the
 /// original behaviour — honest gloss output rather than a fabricated sentence.
 final class PassthroughGlossInterpreter: GlossInterpreting {
+    var displayName: String { "No language model — glosses shown as-is" }
+
     func interpret(_ glosses: [String]) async -> String? {
         glosses.isEmpty ? nil : glosses.joined(separator: " ")
     }
