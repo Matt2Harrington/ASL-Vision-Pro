@@ -105,6 +105,7 @@ struct ContentView_iOS: View {
                 showTranscript.toggle()
             }
             smallButton("arrow.counterclockwise") { pipeline.reset() }
+            smallButton("arrow.triangle.2.circlepath.camera") { camera.flip() }
             Text("Experimental")
                 .font(.caption2)
                 .foregroundStyle(.white.opacity(0.5))

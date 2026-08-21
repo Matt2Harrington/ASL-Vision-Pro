@@ -49,6 +49,9 @@ final class CoreMLSignRecognizer: SignRecognizing {
     private nonisolated(unsafe) var streakCount = 0
     private let requiredStreak: Int
 
+    /// Label the training set uses for "not signing".
+    static let restLabel = "NONE"
+
     init(model: MLModel, labels: [String],
          confidenceThreshold: Float = 0.75,
          requiredStreak: Int = 2) {
@@ -66,6 +69,16 @@ final class CoreMLSignRecognizer: SignRecognizing {
                 lastPeek = nil
                 return nil
             }
+            // NONE is the model abstaining — a real prediction, but not something to show.
+            // Reaching it also clears any streak, so a sign has to be re-established rather
+            // than resuming across a pause.
+            if label == Self.restLabel {
+                streakLabel = nil
+                streakCount = 0
+                lastPeek = Peek(label: label, confidence: confidence, accepted: false)
+                return nil
+            }
+
             if label == streakLabel {
                 streakCount += 1
             } else {
