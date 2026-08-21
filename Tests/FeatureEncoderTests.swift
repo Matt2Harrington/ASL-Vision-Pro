@@ -55,13 +55,41 @@ final class FeatureEncoderTests: XCTestCase {
         XCTAssertNil(FeatureEncoder.encodeSequence([], length: 24))
     }
 
-    /// Depth must actually reach the tensor — the whole point of the 3D upgrade.
-    func testDepthIsEncoded() throws {
-        let withDepth = try XCTUnwrap(FeatureEncoder.encodeSequence([frame(ts: 0)], length: 1))
-        let a = try XCTUnwrap(withDepth.featureValue(for: "landmarks")?.multiArrayValue)
-        // Third coord of the first left-hand point is its z, relative to the anchor.
-        let z0 = a[[0, 0, 2]].floatValue
-        XCTAssertNotEqual(z0, 0.0, accuracy: 0.0001,
-                          "z should be non-zero when landmarks carry depth")
+    /// Depth is deliberately zeroed. Vision supplies no z on the camera path, so models are
+    /// trained with depth zeroed — and visionOS hand tracking, which does supply real depth,
+    /// must be encoded the same way or it feeds the model a channel it never saw in training.
+    func testDepthIsZeroedToMatchTraining() throws {
+        XCTAssertFalse(FeatureEncoder.usesDepth,
+                       "flip this only alongside a model actually trained with depth")
+
+        let provider = try XCTUnwrap(FeatureEncoder.encodeSequence([frame(ts: 0)], length: 1))
+        let a = try XCTUnwrap(provider.featureValue(for: "landmarks")?.multiArrayValue)
+        for point in 0..<FeatureEncoder.handPoints {
+            let z = a[[0, 0, NSNumber(value: point * FeatureEncoder.coordsPerPoint + 2)]].floatValue
+            XCTAssertEqual(z, 0, accuracy: 0.0001, "z must be zero at point \(point)")
+        }
+    }
+
+    /// Hands-only: face and body slots stay in the tensor (so the shape is unchanged) but must
+    /// carry zeros, because MediaPipe and Vision disagree on those topologies.
+    func testFaceAndBodySlotsAreZeroedWhenHandsOnly() throws {
+        try XCTSkipUnless(FeatureEncoder.handsOnly)
+
+        let provider = try XCTUnwrap(FeatureEncoder.encodeSequence([frame(ts: 0)], length: 1))
+        let a = try XCTUnwrap(provider.featureValue(for: "landmarks")?.multiArrayValue)
+        let handFeatures = FeatureEncoder.handPoints * 2 * FeatureEncoder.coordsPerPoint
+        for i in handFeatures..<FeatureEncoder.featuresPerFrame {
+            XCTAssertEqual(a[[0, 0, NSNumber(value: i)]].floatValue, 0, accuracy: 0.0001,
+                           "feature \(i) should be zero outside the hand region")
+        }
+    }
+
+    /// Hand landmarks must still be written, or hands-only would encode nothing at all.
+    func testHandFeaturesAreNonZero() throws {
+        let provider = try XCTUnwrap(FeatureEncoder.encodeSequence([frame(ts: 0)], length: 1))
+        let a = try XCTUnwrap(provider.featureValue(for: "landmarks")?.multiArrayValue)
+        let handFeatures = FeatureEncoder.handPoints * 2 * FeatureEncoder.coordsPerPoint
+        let any = (0..<handFeatures).contains { a[[0, 0, NSNumber(value: $0)]].floatValue != 0 }
+        XCTAssertTrue(any, "hand region encoded all zeros")
     }
 }

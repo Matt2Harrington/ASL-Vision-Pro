@@ -46,6 +46,9 @@ final class TranslationPipeline {
 
     /// Most recent landmarks, for the Phase 1 debug overlay.
     private(set) var latestFrame: SignFrame?
+    /// The recognizer's latest guess, including ones rejected by the confidence gate, so the
+    /// UI can explain silence instead of just showing nothing.
+    private(set) var lastGuess: CoreMLSignRecognizer.Peek?
 
     private var runTask: Task<Void, Never>?
     private let startTime = Date()
@@ -84,7 +87,9 @@ final class TranslationPipeline {
             latestFrame = frame   // raw pixelBuffer is dropped here; only landmarks continue
 
             guard let window = segmenter.accept(frame) else { continue }
-            guard let result = await recognizer.recognize(window) else { continue }
+            let result = await recognizer.recognize(window)
+            if let coreML = recognizer as? CoreMLSignRecognizer { lastGuess = coreML.lastPeek }
+            guard let result else { continue }
 
             history.append(result)
             caption = assembler.append(result)

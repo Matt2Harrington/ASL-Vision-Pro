@@ -32,6 +32,14 @@ final class CoreMLSignRecognizer: SignRecognizing {
     private let labels: [String]
     private let confidenceThreshold: Float
 
+    /// The most recent prediction, published whether or not it cleared the threshold.
+    ///
+    /// Without this a gated result is indistinguishable from the model never running, and
+    /// "it isn't picking up my sign" can't be diagnosed on a phone. Reading this shows
+    /// whether the model is confidently wrong, unconfidently right, or not firing at all.
+    struct Peek: Sendable { let label: String; let confidence: Float; let accepted: Bool }
+    private(set) nonisolated(unsafe) var lastPeek: Peek?
+
     init(model: MLModel, labels: [String], confidenceThreshold: Float = 0.6) {
         self.model = model
         self.labels = labels
@@ -42,8 +50,13 @@ final class CoreMLSignRecognizer: SignRecognizing {
         guard let input = FeatureEncoder.encode(window) else { return nil }
         do {
             let output = try await model.prediction(from: input)
-            guard let (label, confidence) = Self.topLabel(from: output, labels: labels),
-                  confidence >= confidenceThreshold else { return nil }
+            guard let (label, confidence) = Self.topLabel(from: output, labels: labels) else {
+                lastPeek = nil
+                return nil
+            }
+            let accepted = confidence >= confidenceThreshold
+            lastPeek = Peek(label: label, confidence: confidence, accepted: accepted)
+            guard accepted else { return nil }
             let ts = window.frames.last?.timestamp ?? 0
             return RecognitionResult(text: label, confidence: confidence, timestamp: ts, kind: .sign)
         } catch {

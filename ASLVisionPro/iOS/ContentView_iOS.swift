@@ -32,6 +32,7 @@ struct ContentView_iOS: View {
 
             VStack(spacing: 12) {
                 if showTracking { trackingReadout }
+                if showTracking, let guess = pipeline.lastGuess { guessReadout(guess) }
 
                 CaptionView(text: pipeline.caption,
                             translation: pipeline.translation,
@@ -71,6 +72,28 @@ struct ContentView_iOS: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+        .background(.black.opacity(0.45), in: Capsule())
+    }
+
+    /// The model's best guess and how sure it is. A rejected guess is shown greyed rather
+    /// than hidden — seeing "NO at 41%" tells you the model is close, which an empty caption
+    /// does not.
+    private func guessReadout(_ guess: CoreMLSignRecognizer.Peek) -> some View {
+        HStack(spacing: 8) {
+            Text(guess.label)
+                .font(.headline)
+                .foregroundStyle(guess.accepted ? .green : .white.opacity(0.7))
+            Text("\(Int(guess.confidence * 100))%")
+                .font(.subheadline.monospacedDigit())
+                .foregroundStyle(.white.opacity(0.8))
+            if !guess.accepted {
+                Text("below threshold")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
         .background(.black.opacity(0.45), in: Capsule())
     }
 

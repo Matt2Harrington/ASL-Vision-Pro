@@ -22,7 +22,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from feature_spec import SEQ_LEN, FEATURES_PER_FRAME, POINTS, MIN_SCALE
+from feature_spec import SEQ_LEN, FEATURES_PER_FRAME, POINTS, MIN_SCALE, HANDS_ONLY
 
 HAND_POINTS = POINTS["left_hand"]
 BODY_POINTS = POINTS["body"]
@@ -66,34 +66,53 @@ def frame_points(group, kind, count, source_indices=None):
     return out
 
 
+def write_hand(pts, out, offset):
+    """One hand, centred on its wrist and scaled by wrist-to-middle-MCP span.
+
+    Mirrors FeatureEncoder.writeHand exactly. Wrist-relative normalization removes any
+    dependence on detecting a torso, which the phone often can't see, and is computed the
+    same way from MediaPipe and Vision landmarks because their hand topology matches.
+    """
+    if not np.any(pts):
+        return
+    wrist = pts[0].copy()
+    span = float(np.sqrt(((pts[9][0] - wrist[0]) ** 2) + ((pts[9][1] - wrist[1]) ** 2)))
+    span = max(0.02, span)
+    for i in range(len(pts)):
+        out[offset + i * 3: offset + i * 3 + 3] = (pts[i] - wrist) / span
+
+
 def encode_clip(df, keep_depth):
-    """One clip → (SEQ_LEN, FEATURES_PER_FRAME), normalized like FeatureEncoder."""
+    """One clip -> (SEQ_LEN, FEATURES_PER_FRAME), normalized like FeatureEncoder."""
+    hand_n = POINTS["left_hand"]
     frames = []
     for _, group in df.groupby("frame", sort=True):
-        left = frame_points(group, "left_hand", HAND_POINTS)
-        right = frame_points(group, "right_hand", HAND_POINTS)
+        left = frame_points(group, "left_hand", hand_n)
+        right = frame_points(group, "right_hand", hand_n)
+
+        if HANDS_ONLY:
+            # Face and body slots stay in the tensor but carry zeros: MediaPipe and Vision
+            # disagree on those topologies, so training on them teaches noise.
+            vec = np.zeros(FEATURES_PER_FRAME, dtype=np.float32)
+            write_hand(left, vec, 0)
+            write_hand(right, vec, hand_n * 3)
+            if not keep_depth:
+                vec[2::3] = 0.0
+            frames.append(vec)
+            continue
+
         body = frame_points(group, "pose", BODY_POINTS, BODY_SOURCE)
-        # neck: midpoint of the shoulders, which MediaPipe doesn't provide directly.
         body[2] = (body[0] + body[1]) / 2.0
-
         face_all = frame_points(group, "face", 468)
-        idx = np.linspace(0, 467, FACE_POINTS).astype(int)   # even sample, as the app does
-        face = face_all[idx]
+        face = face_all[np.linspace(0, 467, FACE_POINTS).astype(int)]
 
-        pts = np.concatenate([left, right, body, face], axis=0)   # (66, 3)
-
-        # Same normalization as FeatureEncoder: torso-centred, shoulder-width scaled.
+        pts = np.concatenate([left, right, body, face], axis=0)
         anchor = body[0].copy()
         dx, dy = body[0][0] - body[1][0], body[0][1] - body[1][1]
         scale = max(MIN_SCALE, float(np.sqrt(dx * dx + dy * dy)))
         pts = (pts - anchor) / scale
-
         if not keep_depth:
-            # Vision gives no depth on the camera path, so the app sends z = 0. Training with
-            # MediaPipe's depth would teach the model a channel that is always zero at
-            # inference — a silent train/serve mismatch.
             pts[:, 2] = 0.0
-
         frames.append(pts.reshape(-1))
 
     if not frames:

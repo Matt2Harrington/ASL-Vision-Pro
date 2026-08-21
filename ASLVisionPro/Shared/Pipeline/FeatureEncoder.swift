@@ -14,6 +14,19 @@ enum FeatureEncoder {
     static let bodyPoints = 8                      // feature_spec: points.body
     static let facePoints = 16                     // feature_spec: points.face
     static let coordsPerPoint = 3                  // feature_spec: coords_per_point (x, y, z)
+    /// feature_spec: hands_only.
+    ///
+    /// MediaPipe and Apple Vision agree on the 21-point hand skeleton but not on face or body:
+    /// 468 face points versus ~76, and different pose joints. Training on those regions with
+    /// public MediaPipe data teaches patterns that are noise on device. Their slots stay in the
+    /// tensor (so the model shape is unchanged) but carry zeros on both sides.
+    static let handsOnly = true
+    /// feature_spec: uses_depth.
+    ///
+    /// Vision gives no depth on the camera path, so models are trained with z zeroed. visionOS
+    /// hand tracking *does* supply real depth — feeding it to a model trained on zeros would be
+    /// a silent mismatch, so depth is zeroed here until a depth-trained model ships.
+    static let usesDepth = false
     static var featuresPerFrame: Int { (handPoints * 2 + bodyPoints + facePoints) * coordsPerPoint } // = 198
 
     /// Fixed-window encoder for the isolated-sign classifier (Levels 1–2). Produces
@@ -55,24 +68,56 @@ enum FeatureEncoder {
     /// torso and scaled by shoulder width so recognition is invariant to signer
     /// distance/position. `z` is 0 for 2D sources and a real depth for hand tracking.
     private static func flatten(_ frame: SignFrame) -> [Float] {
+        var out = [Float](repeating: 0, count: featuresPerFrame)
+
+        if handsOnly {
+            // Each hand is normalized against its own wrist and span. That removes any
+            // dependence on detecting the torso — which often fails on a phone held close,
+            // where only hands are in frame — and it is computed identically from MediaPipe
+            // and Vision landmarks, since their hand topology matches.
+            writeHand(frame.leftHand,  into: &out, at: 0)
+            writeHand(frame.rightHand, into: &out, at: handPoints * coordsPerPoint)
+            return out
+        }
+
         let anchor = frame.body.first?.position ?? CGPoint(x: 0.5, y: 0.5)
         let anchorZ = frame.body.first?.z ?? 0
         let scale = shoulderScale(frame)
 
         func encode(_ points: [Landmark], count: Int) -> [Float] {
-            var out = [Float](repeating: 0, count: count * coordsPerPoint)
+            var seg = [Float](repeating: 0, count: count * coordsPerPoint)
             for (i, lm) in points.prefix(count).enumerated() {
-                out[i * coordsPerPoint]     = Float((lm.position.x - anchor.x) / scale)
-                out[i * coordsPerPoint + 1] = Float((lm.position.y - anchor.y) / scale)
-                out[i * coordsPerPoint + 2] = (lm.z - anchorZ) / Float(scale)
+                seg[i * coordsPerPoint]     = Float((lm.position.x - anchor.x) / scale)
+                seg[i * coordsPerPoint + 1] = Float((lm.position.y - anchor.y) / scale)
+                seg[i * coordsPerPoint + 2] = usesDepth ? (lm.z - anchorZ) / Float(scale) : 0
             }
-            return out
+            return seg
         }
 
         return encode(frame.leftHand, count: handPoints)
              + encode(frame.rightHand, count: handPoints)
              + encode(frame.body, count: bodyPoints)
              + encode(frame.face, count: facePoints)
+    }
+
+    /// Write one hand, centred on its wrist (joint 0) and scaled by the wrist-to-middle-MCP
+    /// distance (joint 9) — a stable proxy for hand size, so recognition doesn't depend on how
+    /// close the hand is to the camera. An undetected hand leaves zeros.
+    private static func writeHand(_ points: [Landmark], into out: inout [Float], at offset: Int) {
+        guard points.count >= handPoints, points[0].confidence > 0 else { return }
+        let wrist = points[0]
+        let mid = points[9]
+        let dx = mid.position.x - wrist.position.x
+        let dy = mid.position.y - wrist.position.y
+        let span = max(0.02, sqrt(dx * dx + dy * dy))
+
+        for i in 0..<handPoints {
+            let lm = points[i]
+            let base = offset + i * coordsPerPoint
+            out[base]     = Float((lm.position.x - wrist.position.x) / span)
+            out[base + 1] = Float((lm.position.y - wrist.position.y) / span)
+            out[base + 2] = usesDepth ? (lm.z - wrist.z) / Float(span) : 0
+        }
     }
 
     private static func shoulderScale(_ frame: SignFrame) -> CGFloat {
