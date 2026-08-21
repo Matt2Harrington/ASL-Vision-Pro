@@ -10,7 +10,10 @@ import SwiftUI
 struct ModeSelectionView_iOS: View {
     @State private var mode: Mode?
 
-    enum Mode: Hashable { case tutor, interpret, dictionary, collect, listen }
+    enum Mode: Hashable, Identifiable {
+        case tutor, interpret, dictionary, collect, listen, translationCheck
+        var id: Self { self }
+    }
 
     private var starterLesson: [String] {
         let lesson = SignCatalog.shared.entries.prefix(10).map(\.gloss)
@@ -19,8 +22,26 @@ struct ModeSelectionView_iOS: View {
 
     var body: some View {
         switch mode {
+        case nil:
+            chooser
+        default:
+            // Every mode is presented full-screen, so each needs its own dismiss control —
+            // there's no navigation bar to fall back on, and the camera modes cover the
+            // entire display.
+            modeContent
+                .overlay(alignment: .topLeading) {
+                    CloseButton { mode = nil }
+                        .padding(.leading, 16)
+                        .padding(.top, 12)
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var modeContent: some View {
+        switch mode {
         case .tutor:
-            TutorView_iOS(lesson: starterLesson, onBack: { mode = nil })
+            TutorView_iOS(lesson: starterLesson)
         case .interpret:
             ContentView_iOS()
         case .dictionary:
@@ -35,66 +56,111 @@ struct ModeSelectionView_iOS: View {
             DataCollectorView(prompts: SignCatalog.shared.entries.map(\.gloss),
                               source: CameraSignFrameSource(source: iPhoneCameraSource()),
                               signerID: "signer-1")
+        case .translationCheck:
+            NavigationStack { TranslationCheckView() }
         case nil:
-            chooser
+            EmptyView()
         }
     }
 
     private var chooser: some View {
         NavigationStack {
-            List {
-                Section {
-                    row("Tutor", "Practice signing with camera feedback", "hand.raised.fill") { mode = .tutor }
-                    row("Dictionary", "Browse signs and their parameters", "book.fill") { mode = .dictionary }
-                    if isListenAvailable {
-                        row("Listen", "Live speech captions with ASL gloss", "waveform") { mode = .listen }
-                    }
-                } header: {
-                    Text("Available now")
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.sectionSpacing) {
+                    ScreenHeader(title: "ASL Vision Pro",
+                                 subtitle: "Learn, look up, and follow along — all on device")
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 4)
 
-                Section {
-                    row("Interpret", "Caption someone else signing", "text.bubble.fill") { mode = .interpret }
-                    row("Collect Data", "Record labeled training clips", "record.circle.fill") { mode = .collect }
-                } header: {
-                    Text("Experimental")
-                } footer: {
-                    Text("Interpret and Collect need a trained model to produce results. Camera landmarks are 2D, so recognition is weaker than on Vision Pro.")
+                    section("Start here", items: primaryModes)
+                    section("More", items: secondaryModes)
+                }
+                .padding(24)
+            }
+        }
+    }
+
+    private func section(_ title: String, items: [ModeInfo]) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeader(title: title)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Theme.itemSpacing)],
+                      spacing: Theme.itemSpacing) {
+                ForEach(items) { info in
+                    CardButton { mode = info.mode } content: {
+                        VStack(alignment: .leading, spacing: 10) {
+                            IconBadge(symbol: info.symbol, tint: info.tint)
+                            Text(info.title).font(.title3.weight(.semibold))
+                            Text(info.summary)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if let note = info.note {
+                                Label(note, systemImage: "info.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.top, 2)
+                            }
+                        }
+                    }
                 }
             }
-            .navigationTitle("ASL Vision Pro")
         }
+    }
+
+    struct ModeInfo: Identifiable {
+        let mode: Mode
+        let title: String
+        let summary: String
+        let symbol: String
+        let tint: Color
+        var note: String? = nil
+        var id: Mode { mode }
+    }
+
+    /// Works right now — no model, no entitlement.
+    private var primaryModes: [ModeInfo] {
+        var modes = [
+            ModeInfo(mode: .tutor, title: "Practice",
+                     summary: "Sign along and get feedback on every attempt.",
+                     symbol: "hand.raised.fill", tint: Theme.Accent.practice),
+            ModeInfo(mode: .dictionary, title: "Dictionary",
+                     summary: "Look up any sign and see how it's formed.",
+                     symbol: "book.fill", tint: Theme.Accent.dictionary),
+        ]
+        if isListenAvailable {
+            modes.append(ModeInfo(mode: .listen, title: "Listen",
+                                  summary: "Turn nearby speech into live captions.",
+                                  symbol: "waveform", tint: Theme.Accent.listen))
+        }
+        return modes
+    }
+
+    /// Gated or internal — demoted, with the reason stated up front.
+    private var secondaryModes: [ModeInfo] {
+        [
+            ModeInfo(mode: .interpret, title: "Interpret",
+                     summary: "Caption someone else signing to you.",
+                     symbol: "text.bubble.fill", tint: Theme.Accent.interpret,
+                     note: "Needs a trained model"),
+            ModeInfo(mode: .collect, title: "Record Clips",
+                     summary: "Build training data for the recognizer.",
+                     symbol: "record.circle.fill", tint: Theme.Accent.collect,
+                     note: "For development"),
+            ModeInfo(mode: .translationCheck, title: "Translation Check",
+                     summary: "See how the on-device model turns glosses into English.",
+                     symbol: "brain", tint: Theme.Accent.listen,
+                     note: "For development"),
+        ]
     }
 
     private var isListenAvailable: Bool {
         if #available(iOS 26.0, *) { return true } else { return false }
     }
 
-    private func row(_ title: String, _ subtitle: String, _ symbol: String,
-                     action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                Image(systemName: symbol).font(.title3).frame(width: 30)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(.headline)
-                    Text(subtitle).font(.caption).foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundStyle(.tertiary)
-            }
-            .padding(.vertical, 4)
-            // Plain buttons in List rows need an explicit hit shape or taps on empty space
-            // are swallowed — same bug found in DictionaryView on device.
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
     private func unavailable(_ message: String) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle").font(.largeTitle)
             Text(message).foregroundStyle(.secondary)
-            Button("Back") { mode = nil }
         }
         .padding(40)
     }
@@ -105,9 +171,8 @@ struct ModeSelectionView_iOS: View {
 struct TutorView_iOS: View {
     @State private var camera: iPhoneCameraSource
     @State private var session: TutorSession
-    let onBack: () -> Void
 
-    init(lesson: [String], onBack: @escaping () -> Void) {
+    init(lesson: [String]) {
         let cam = iPhoneCameraSource()
         _camera = State(initialValue: cam)
         _session = State(initialValue: TutorSession(
@@ -115,7 +180,6 @@ struct TutorView_iOS: View {
             source: CameraSignFrameSource(source: cam),
             verifier: RecognizerFactory.makeVerifier()
         ))
-        self.onBack = onBack
     }
 
     var body: some View {
@@ -124,6 +188,11 @@ struct TutorView_iOS: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 16) {
+                if !RecognizerFactory.hasBundledModel {
+                    SimulatedBanner()
+                        .padding(.horizontal, 20)
+                }
+
                 if let target = session.currentTarget {
                     VStack(spacing: 6) {
                         Text("Sign this").font(.caption).foregroundStyle(.white.opacity(0.8))
@@ -147,12 +216,9 @@ struct TutorView_iOS: View {
                         .foregroundStyle(attempt.isCorrect ? .green : .orange)
                 }
 
-                HStack(spacing: 20) {
-                    Button("Back", action: onBack)
-                    Button("Skip") { session.skip() }
-                        .disabled(session.currentTarget == nil)
-                }
-                .buttonStyle(.borderedProminent)
+                Button("Skip") { session.skip() }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(session.currentTarget == nil)
             }
             .padding(.bottom, 30)
         }

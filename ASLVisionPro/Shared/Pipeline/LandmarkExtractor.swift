@@ -5,13 +5,15 @@ import OSLog
 
 /// Phase 1 — turn a camera frame into holistic landmarks for the signer.
 ///
-/// Runs Apple Vision requests on-device: hand pose (both hands), upper-body pose, and
-/// face landmarks (for non-manual markers). All three feed the recognizer; hands carry
-/// most lexical content, face/body carry grammar and signing-space cues.
+/// **Joint order is part of the model contract.** Feature index *i* must mean the same joint
+/// in every frame, so joints are read by name from an explicit ordered list and missing ones
+/// are emitted as zero-confidence placeholders rather than dropped. Reading a dictionary's
+/// `values` instead would be non-deterministic (Swift hashes with a per-process seed) and
+/// filtering would shift every later joint — either one silently destroys training.
 ///
-/// NOTE: For higher-fidelity holistic tracking you may swap in an on-device MediaPipe
-/// Holistic graph here; the output `SignFrame` contract stays identical so nothing
-/// downstream changes.
+/// The hand order below is deliberately the standard 21-point skeleton
+/// (wrist, then thumb → little, 4 joints each), which is the same layout MediaPipe uses.
+/// That makes public MediaPipe landmark datasets directly mappable onto this pipeline.
 final class LandmarkExtractor {
     private let log = Logger(subsystem: "ASLVisionPro", category: "Landmarks")
 
@@ -23,7 +25,27 @@ final class LandmarkExtractor {
     private let bodyRequest = VNDetectHumanBodyPoseRequest()
     private let faceRequest = VNDetectFaceLandmarksRequest()
 
-    /// Extract landmarks from one frame. Returns `nil` if no person/hands are found.
+    /// 21 hand joints, matching MediaPipe's ordering.
+    static let handJointOrder: [VNHumanHandPoseObservation.JointName] = [
+        .wrist,
+        .thumbCMC, .thumbMP, .thumbIP, .thumbTip,
+        .indexMCP, .indexPIP, .indexDIP, .indexTip,
+        .middleMCP, .middlePIP, .middleDIP, .middleTip,
+        .ringMCP, .ringPIP, .ringDIP, .ringTip,
+        .littleMCP, .littlePIP, .littleDIP, .littleTip,
+    ]
+
+    /// 8 upper-body joints that define the signing space.
+    /// Index 0 and 1 MUST be the shoulders — `FeatureEncoder` anchors on [0] and scales by
+    /// the [0]–[1] distance (shoulder width) to stay invariant to signer distance.
+    static let bodyJointOrder: [VNHumanBodyPoseObservation.JointName] = [
+        .leftShoulder, .rightShoulder,
+        .neck, .nose,
+        .leftElbow, .rightElbow,
+        .leftWrist, .rightWrist,
+    ]
+
+    /// Extract landmarks from one frame. Returns `nil` if no hands are found.
     func extract(from pixelBuffer: CVPixelBuffer,
                  orientation: CGImagePropertyOrientation,
                  timestamp: TimeInterval) -> SignFrame? {
@@ -53,9 +75,10 @@ final class LandmarkExtractor {
         var left: [Landmark] = []
         var right: [Landmark] = []
         for obs in observations {
-            let points = landmarks(from: try? obs.recognizedPoints(.all))
-            // Vision reports chirality from the camera's view; map to signer's L/R downstream if needed.
-            if obs.chirality == .left { left = points } else { right = points }
+            guard let points = try? obs.recognizedPoints(.all) else { continue }
+            let ordered = Self.handJointOrder.map { landmark(points[$0]) }
+            // Vision reports chirality from the camera's view.
+            if obs.chirality == .left { left = ordered } else { right = ordered }
         }
         return (left, right)
     }
@@ -63,27 +86,45 @@ final class LandmarkExtractor {
     // MARK: - Body
 
     private func bodyLandmarks() -> [Landmark] {
-        guard let obs = bodyRequest.results?.first else { return [] }
-        return landmarks(from: try? obs.recognizedPoints(.all))
+        guard let obs = bodyRequest.results?.first,
+              let points = try? obs.recognizedPoints(.all) else { return [] }
+        return Self.bodyJointOrder.map { landmark(points[$0]) }
     }
 
     // MARK: - Face (non-manual markers)
 
+    /// Vision returns a fixed-size point set per revision, so evenly sampling it yields a
+    /// stable subset — the same facial positions every frame, which is what matters here.
     private func faceLandmarks() -> [Landmark] {
         guard let obs = faceRequest.results?.first,
-              let region = obs.landmarks?.allPoints else { return [] }
-        return region.normalizedPoints.map { Landmark(position: CGPoint(x: CGFloat($0.x), y: CGFloat($0.y)),
-                                                       confidence: obs.confidence) }
+              let all = obs.landmarks?.allPoints else { return [] }
+        let points = all.normalizedPoints
+        guard !points.isEmpty else { return [] }
+
+        let wanted = FeatureEncoder.facePoints
+        return (0..<wanted).map { i in
+            let idx = points.count > 1 ? (i * (points.count - 1)) / max(1, wanted - 1) : 0
+            let p = points[min(idx, points.count - 1)]
+            // Same top-left convention as the pose and hand points above.
+            return Landmark(position: CGPoint(x: CGFloat(p.x), y: 1 - CGFloat(p.y)),
+                            z: 0, confidence: obs.confidence)
+        }
     }
 
     // MARK: - Helpers
 
-    /// Generic over the joint-name key type, so it accepts both hand-pose and body-pose
-    /// point dictionaries (which use distinct `JointName` types).
-    private func landmarks<Key>(from recognized: [Key: VNRecognizedPoint]?) -> [Landmark] {
-        guard let recognized else { return [] }
-        return recognized.values
-            .filter { $0.confidence > 0.3 }
-            .map { Landmark(position: $0.location, confidence: $0.confidence) }
+    /// A missing or low-confidence joint becomes a zero placeholder so its slot in the
+    /// feature vector is preserved. Dropping it would shift every later joint.
+    ///
+    /// **Y is flipped to a top-left origin.** Vision reports normalized points from the image's
+    /// *lower*-left corner, while MediaPipe — and therefore every public landmark corpus we
+    /// train on — uses the upper-left. Without this every vertical motion reaches the model
+    /// inverted: a hand rising from the forehead looks like a hand falling.
+    private func landmark(_ point: VNRecognizedPoint?) -> Landmark {
+        guard let point, point.confidence > 0.3 else {
+            return Landmark(position: .zero, z: 0, confidence: 0)
+        }
+        let topLeft = CGPoint(x: point.location.x, y: 1 - point.location.y)
+        return Landmark(position: topLeft, z: 0, confidence: point.confidence)
     }
 }

@@ -32,3 +32,7 @@ ckpt*.pt
 
 # Enterprise license — NEVER commit; issued per-team by Apple
 Enterprise.license
+
+# Kaggle subset (re-downloadable via training/fetch_subset.py)
+training/data/asl_signs/
+training/*.npz

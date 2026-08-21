@@ -11,6 +11,9 @@ struct ASLVisionProApp: App {
             ModeSelectionView()
                 .environment(pipeline)
         }
+        // Sized so the whole home screen fits without clipping; the simulator's default
+        // window was short enough to cut off the second section.
+        .defaultSize(width: 1100, height: 820)
         // Default (glass) window style, not .plain: .plain removes the system window
         // background, leaving UI floating directly over passthrough. Verified in the
         // simulator — text was unreadable against a bright wall and legible only where it

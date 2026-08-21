@@ -18,6 +18,7 @@ INPUT_SHAPE = tuple(SPEC["input_shape"])
 POINTS = SPEC["points"]
 COORDS_PER_POINT = SPEC["coords_per_point"]
 MIN_SCALE = SPEC["normalization"]["min_scale"]
+HANDS_ONLY = SPEC.get("hands_only", False)
 INPUT_NAME = SPEC["io"]["input_feature_name"]
 OUTPUT_NAME = SPEC["io"]["output_feature_name"]
 

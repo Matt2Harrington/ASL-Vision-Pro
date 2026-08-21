@@ -5,15 +5,25 @@ import OSLog
 
 /// Orchestrates the full on-device pipeline and publishes live captions to the UI.
 ///
-///   camera → landmarks → segmentation → recognition → caption assembly
+///   camera → landmarks → segmentation → recognition → glosses → translation
 ///
-/// `@Observable` so SwiftUI views update as captions stream in. Everything runs on-device;
-/// no footage or landmarks leave the headset (ARCHITECTURE.md §7).
+/// Two stages, split by what each is good at: the Core ML recognizer *perceives* signs, and
+/// an on-device language model turns the resulting glosses into English (ASL grammar is not
+/// English word order, so joining glosses gives word salad). Both run locally — no footage
+/// or landmarks leave the device, and the language model only ever sees text.
+///
+/// `@Observable` so SwiftUI views update as captions stream in.
 @MainActor
 @Observable
 final class TranslationPipeline {
-    /// The live, revisable caption shown to the user.
+    /// Raw recognized glosses, e.g. "ME NAME M-A-T-T". Always shown — it's what the model
+    /// actually saw, and stays visible even when translation is unavailable.
     private(set) var caption: String = ""
+    /// English translation of the current gloss run, when a language model produced one.
+    /// Nil means "no translation" rather than a guess.
+    private(set) var translation: String?
+    /// True while the language model is working, so the UI can show it's thinking.
+    private(set) var isTranslating = false
     /// Rolling history of confirmed results (for a transcript panel / debugging).
     private(set) var history: [RecognitionResult] = []
     /// True while the camera session is delivering frames.
@@ -25,16 +35,30 @@ final class TranslationPipeline {
     private let segmenter = SignSegmenter()
     private let recognizer: SignRecognizing
     private let assembler = CaptionAssembler()
+    private let interpreter: GlossInterpreting
+
+    /// Glosses accumulated since the last translation.
+    private var pendingGlosses: [String] = []
+    private var translateTask: Task<Void, Never>?
+    /// How long signing must pause before translating. Translating mid-utterance produces
+    /// sentences that are wrong until the phrase finishes.
+    private let translationDelay: Duration = .milliseconds(900)
 
     /// Most recent landmarks, for the Phase 1 debug overlay.
     private(set) var latestFrame: SignFrame?
+    /// The recognizer's latest guess, including ones rejected by the confidence gate, so the
+    /// UI can explain silence instead of just showing nothing.
+    private(set) var lastGuess: CoreMLSignRecognizer.Peek?
 
     private var runTask: Task<Void, Never>?
     private let startTime = Date()
 
-    init(source: FrameSource, recognizer: SignRecognizing = StubSignRecognizer()) {
+    init(source: FrameSource,
+         recognizer: SignRecognizing = StubSignRecognizer(),
+         interpreter: GlossInterpreting = GlossInterpreterFactory.make()) {
         self.source = source
         self.recognizer = recognizer
+        self.interpreter = interpreter
     }
 
     func start() {
@@ -47,6 +71,8 @@ final class TranslationPipeline {
         source.stop()
         runTask?.cancel()
         runTask = nil
+        translateTask?.cancel()
+        translateTask = nil
         isRunning = false
     }
 
@@ -61,12 +87,67 @@ final class TranslationPipeline {
             latestFrame = frame   // raw pixelBuffer is dropped here; only landmarks continue
 
             guard let window = segmenter.accept(frame) else { continue }
-            guard let result = await recognizer.recognize(window) else { continue }
+            let result = await recognizer.recognize(window)
+            if let coreML = recognizer as? CoreMLSignRecognizer { lastGuess = coreML.lastPeek }
+            guard let result else { continue }
 
             history.append(result)
             caption = assembler.append(result)
+            scheduleTranslation(of: result)
         }
         isRunning = false
+    }
+}
+
+// MARK: - Translation
+
+extension TranslationPipeline {
+    /// Collect glosses and translate once signing pauses. Each new sign restarts the timer,
+    /// so a phrase is translated as a whole rather than re-translated on every sign.
+    private func scheduleTranslation(of result: RecognitionResult) {
+        // Continuous recognizers already emit whole phrases; nothing to assemble.
+        guard result.kind != .phrase else { return }
+
+        pendingGlosses.append(result.text)
+        translateTask?.cancel()
+        translateTask = Task { [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(for: self.translationDelay)
+            guard !Task.isCancelled else { return }
+            await self.translatePending()
+        }
+    }
+
+    private func translatePending() async {
+        let glosses = pendingGlosses
+        guard glosses.count >= 2 else { return }
+
+        isTranslating = true
+        let english = await interpreter.interpret(glosses)
+        isTranslating = false
+
+        // Keep the previous translation rather than blanking the line when the model
+        // declines — an empty result is not evidence the earlier one was wrong.
+        if let english { translation = english }
+    }
+
+    /// Live calibration knobs, applied to the Core ML recognizer when present.
+    var confidenceThreshold: Float {
+        get { (recognizer as? CoreMLSignRecognizer)?.confidenceThreshold ?? 0 }
+        set { (recognizer as? CoreMLSignRecognizer)?.confidenceThreshold = newValue }
+    }
+    var requiredStreak: Int {
+        get { (recognizer as? CoreMLSignRecognizer)?.requiredStreak ?? 0 }
+        set { (recognizer as? CoreMLSignRecognizer)?.requiredStreak = newValue }
+    }
+    var isCalibratable: Bool { recognizer is CoreMLSignRecognizer }
+
+    /// Clear the caption and start a fresh utterance.
+    func reset() {
+        translateTask?.cancel()
+        pendingGlosses.removeAll()
+        translation = nil
+        caption = ""
     }
 }
 

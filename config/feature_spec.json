@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "description": "Canonical feature contract shared by the Swift FeatureEncoder (inference) and the Python trainer. If these two drift, accuracy silently collapses. This file is the single source of truth; both sides must match it. v2: coords_per_point 2 -> 3 (x, y, z). Depth is real for ARKit hand tracking and 0 for 2D camera sources.",
+  "version": 3,
+  "description": "Canonical feature contract shared by the Swift FeatureEncoder (inference) and the Python trainer. If these two drift, accuracy silently collapses. v3: hands_only. MediaPipe and Apple Vision agree on the 21-point hand skeleton but not on face or body topology (468 vs ~76 face points; different pose joints), so training on those regions teaches patterns that are noise at inference. Their slots are kept but zeroed on both sides, which avoids changing the tensor shape. uses_depth is false: Vision supplies no z on the camera path, so the model is trained with depth zeroed. The encoder zeroes it too, which also keeps visionOS hand tracking \u2014 which does supply real depth \u2014 consistent with training.",
   "sequence_length": 24,
   "points": {
     "left_hand": 21,
@@ -10,7 +10,11 @@
   },
   "coords_per_point": 3,
   "features_per_frame": 198,
-  "input_shape": [1, 24, 198],
+  "input_shape": [
+    1,
+    24,
+    198
+  ],
   "normalization": {
     "method": "torso_centered_shoulder_scaled",
     "anchor": "body point 0",
@@ -28,5 +32,7 @@
     "input_feature_name": "landmarks",
     "output_feature_name": "logits",
     "blank_index": 0
-  }
+  },
+  "hands_only": true,
+  "uses_depth": false
 }

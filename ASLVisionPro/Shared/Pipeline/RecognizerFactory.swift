@@ -22,6 +22,16 @@ enum RecognizerFactory {
         case automatic    // isolated if available, else continuous, else stub
     }
 
+    /// True when a trained model is actually bundled.
+    ///
+    /// The UI uses this to state plainly that feedback is simulated. Without it the stubs are
+    /// indistinguishable from real recognition — the tutor cycles through encouraging scores
+    /// on a fixed rotation regardless of what is signed, which is convincing and false. For a
+    /// tool people might use to judge their own signing, that is the worst kind of wrong.
+    static var hasBundledModel: Bool {
+        Bundle.main.url(forResource: "SignModel", withExtension: "mlmodelc") != nil
+    }
+
     static func makeRecognizer(mode: Mode = .automatic) -> SignRecognizing {
         switch mode {
         case .isolated:

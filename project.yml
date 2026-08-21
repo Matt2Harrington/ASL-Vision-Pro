@@ -19,7 +19,11 @@ targets:
     platform: visionOS
     sources:
       - path: ASLVisionPro/Shared
-        excludes: ["Resources/**"]
+        excludes: ["Resources/**", "Models/**"]
+      # Optional: the trained model is gitignored (a synthetic placeholder would
+      # mislead). Without it the app falls back to the stub recognizer by design.
+      - path: ASLVisionPro/Shared/Models
+        optional: true
       - path: ASLVisionPro/Shared/Resources
         buildPhase: resources
       - path: ASLVisionPro/visionOS
@@ -34,7 +38,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: ASLVisionPro/visionOS/Support/ASLVisionPro-NoCamera.entitlements
         SWIFT_VERSION: "5.10"
         GENERATE_INFOPLIST_FILE: NO
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: W5EF8HN8UT
+        CODE_SIGN_STYLE: Automatic
 
   # ---- Unit tests (shared pipeline logic) -----------------------------------
   ASLVisionProTests:
@@ -43,7 +48,11 @@ targets:
     sources:
       - path: Tests
       - path: ASLVisionPro/Shared
-        excludes: ["Resources/**"]
+        excludes: ["Resources/**", "Models/**"]
+      # Optional: the trained model is gitignored (a synthetic placeholder would
+      # mislead). Without it the app falls back to the stub recognizer by design.
+      - path: ASLVisionPro/Shared/Models
+        optional: true
       - path: ASLVisionPro/Shared/Resources
         buildPhase: resources
     settings:
@@ -58,7 +67,11 @@ targets:
     platform: iOS
     sources:
       - path: ASLVisionPro/Shared
-        excludes: ["Resources/**"]
+        excludes: ["Resources/**", "Models/**"]
+      # Optional: the trained model is gitignored (a synthetic placeholder would
+      # mislead). Without it the app falls back to the stub recognizer by design.
+      - path: ASLVisionPro/Shared/Models
+        optional: true
       - path: ASLVisionPro/Shared/Resources
         buildPhase: resources
       - path: ASLVisionPro/iOS
@@ -69,4 +82,5 @@ targets:
         SWIFT_VERSION: "5.10"
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"   # iPhone + iPad
-        DEVELOPMENT_TEAM: ""
+        DEVELOPMENT_TEAM: W5EF8HN8UT
+        CODE_SIGN_STYLE: Automatic
