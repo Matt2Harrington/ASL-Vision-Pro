@@ -22,8 +22,10 @@ struct LandmarkOverlayView: View {
     private func draw(_ points: [Landmark], in context: inout GraphicsContext,
                       size: CGSize, color: Color) {
         for lm in points {
+            // Landmarks are already top-left origin (flipped in LandmarkExtractor to match
+            // the training corpora), so they map straight onto view coordinates.
             let p = CGPoint(x: lm.position.x * size.width,
-                            y: (1 - lm.position.y) * size.height)   // Vision origin is bottom-left
+                            y: lm.position.y * size.height)
             let dot = Path(ellipseIn: CGRect(x: p.x - 3, y: p.y - 3, width: 6, height: 6))
             context.fill(dot, with: .color(color.opacity(Double(lm.confidence))))
         }

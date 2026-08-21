@@ -105,7 +105,8 @@ final class LandmarkExtractor {
         return (0..<wanted).map { i in
             let idx = points.count > 1 ? (i * (points.count - 1)) / max(1, wanted - 1) : 0
             let p = points[min(idx, points.count - 1)]
-            return Landmark(position: CGPoint(x: CGFloat(p.x), y: CGFloat(p.y)),
+            // Same top-left convention as the pose and hand points above.
+            return Landmark(position: CGPoint(x: CGFloat(p.x), y: 1 - CGFloat(p.y)),
                             z: 0, confidence: obs.confidence)
         }
     }
@@ -114,10 +115,16 @@ final class LandmarkExtractor {
 
     /// A missing or low-confidence joint becomes a zero placeholder so its slot in the
     /// feature vector is preserved. Dropping it would shift every later joint.
+    ///
+    /// **Y is flipped to a top-left origin.** Vision reports normalized points from the image's
+    /// *lower*-left corner, while MediaPipe — and therefore every public landmark corpus we
+    /// train on — uses the upper-left. Without this every vertical motion reaches the model
+    /// inverted: a hand rising from the forehead looks like a hand falling.
     private func landmark(_ point: VNRecognizedPoint?) -> Landmark {
         guard let point, point.confidence > 0.3 else {
             return Landmark(position: .zero, z: 0, confidence: 0)
         }
-        return Landmark(position: point.location, z: 0, confidence: point.confidence)
+        let topLeft = CGPoint(x: point.location.x, y: 1 - point.location.y)
+        return Landmark(position: topLeft, z: 0, confidence: point.confidence)
     }
 }

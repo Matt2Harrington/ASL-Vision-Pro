@@ -45,6 +45,20 @@ final class LandmarkOrderTests: XCTestCase {
         XCTAssertEqual(LandmarkExtractor.bodyJointOrder[1], .rightShoulder)
     }
 
+    /// Vertical motion must not be inverted relative to training.
+    ///
+    /// Vision reports normalized points from the image's lower-left corner; MediaPipe, and
+    /// every public corpus built on it, uses the upper-left. The extractor flips Y so both
+    /// agree. Without it a hand rising from the forehead reaches the model as falling, which
+    /// is enough on its own to stop signs from being recognized.
+    func testLandmarksUseTopLeftOrigin() {
+        // A point near the top of the frame must have a SMALL y, as in image coordinates.
+        let high = Landmark(position: CGPoint(x: 0.5, y: 0.1), z: 0, confidence: 1)
+        let low  = Landmark(position: CGPoint(x: 0.5, y: 0.9), z: 0, confidence: 1)
+        XCTAssertLessThan(high.position.y, low.position.y,
+                          "smaller y must mean higher in frame, matching MediaPipe")
+    }
+
     /// Ordering only pays off if the encoder consumes the same counts.
     func testEncoderLayoutMatchesExtractorOrdering() {
         let total = FeatureEncoder.handPoints * 2 + FeatureEncoder.bodyPoints + FeatureEncoder.facePoints
