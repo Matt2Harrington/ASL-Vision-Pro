@@ -16,7 +16,13 @@ final class SignSegmenter {
     private let stride: Int              // frames between emitted windows
     private var framesSinceEmit = 0
 
-    init(windowSize: Int = 24, stride: Int = 8) {
+    /// `windowSize` is the captured span, not the model's input length.
+    ///
+    /// Training clips are whole signs, resampled to the model's 24 steps. To match, inference
+    /// has to capture a span that actually contains a whole sign — roughly 1.3s, or 40 frames
+    /// at 30fps — and let `FeatureEncoder` resample it down. Capturing only 24 frames would
+    /// cover ~0.8s and clip the start of anything slower.
+    init(windowSize: Int = 40, stride: Int = 10) {
         self.windowSize = windowSize
         self.stride = stride
     }

@@ -14,6 +14,9 @@ struct ContentView_iOS: View {
     // The camera source isn't observable, so its settings are mirrored here to drive the UI.
     @State private var usingFront = true
     @State private var mirrored = true
+    @State private var showCalibration = false
+    @State private var threshold: Float = 0.75
+    @State private var streak = 2
 
     init() {
         let cam = iPhoneCameraSource()
@@ -37,6 +40,7 @@ struct ContentView_iOS: View {
                 Spacer()
                 guessPill
                 if showTranscript { transcript }
+                if showCalibration { calibration }
                 controls
             }
             .padding(.bottom, 28)
@@ -100,6 +104,34 @@ struct ContentView_iOS: View {
         .padding(.top, 12)
     }
 
+    /// Live gate tuning. Watching the confidence number while signing shows where the
+    /// threshold should sit far more reliably than a validation score does.
+    private var calibration: some View {
+        VStack(spacing: 10) {
+            HStack {
+                Text("Confidence").font(.caption).foregroundStyle(.white.opacity(0.7))
+                Slider(value: $threshold, in: 0.2...0.95)
+                    .onChange(of: threshold) { pipeline.confidenceThreshold = threshold }
+                Text("\(Int(threshold * 100))%")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.white)
+                    .frame(width: 42, alignment: .trailing)
+            }
+            HStack {
+                Text("Stability").font(.caption).foregroundStyle(.white.opacity(0.7))
+                Stepper("\(streak) window\(streak == 1 ? "" : "s")", value: $streak, in: 1...5)
+                    .onChange(of: streak) { pipeline.requiredStreak = streak }
+                    .font(.caption)
+                    .foregroundStyle(.white)
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 20)
+        .padding(.top, 10)
+    }
+
     // MARK: - Controls
 
     private var controls: some View {
@@ -108,6 +140,11 @@ struct ContentView_iOS: View {
                 showTranscript.toggle()
             }
             smallButton("arrow.counterclockwise") { pipeline.reset() }
+            if pipeline.isCalibratable {
+                smallButton(showCalibration ? "slider.horizontal.3" : "slider.horizontal.below.square.filled.and.square") {
+                    showCalibration.toggle()
+                }
+            }
             smallButton("arrow.triangle.2.circlepath.camera") {
                 camera.flip()
                 usingFront = camera.position == .front

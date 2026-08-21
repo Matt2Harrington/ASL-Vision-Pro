@@ -131,6 +131,17 @@ extension TranslationPipeline {
         if let english { translation = english }
     }
 
+    /// Live calibration knobs, applied to the Core ML recognizer when present.
+    var confidenceThreshold: Float {
+        get { (recognizer as? CoreMLSignRecognizer)?.confidenceThreshold ?? 0 }
+        set { (recognizer as? CoreMLSignRecognizer)?.confidenceThreshold = newValue }
+    }
+    var requiredStreak: Int {
+        get { (recognizer as? CoreMLSignRecognizer)?.requiredStreak ?? 0 }
+        set { (recognizer as? CoreMLSignRecognizer)?.requiredStreak = newValue }
+    }
+    var isCalibratable: Bool { recognizer is CoreMLSignRecognizer }
+
     /// Clear the caption and start a fresh utterance.
     func reset() {
         translateTask?.cancel()

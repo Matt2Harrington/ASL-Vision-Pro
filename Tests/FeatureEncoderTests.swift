@@ -43,12 +43,33 @@ final class FeatureEncoderTests: XCTestCase {
         XCTAssertEqual(array.shape.map(\.intValue), [1, 24, 198])
     }
 
-    /// Long input keeps the most RECENT frames.
-    func testLongSequenceIsTrimmed() throws {
+    /// A longer capture is RESAMPLED across its whole span, not truncated to the tail.
+    ///
+    /// This mirrors how training clips were time-normalized — each is a whole sign stretched
+    /// to fill the window — so the model sees signs at the temporal scale it learned. Keeping
+    /// only the most recent frames would feed it the end of a sign and drop the start.
+    func testLongSequenceIsResampledNotTruncated() throws {
         let frames = (0..<100).map { frame(ts: TimeInterval($0)) }
         let provider = try XCTUnwrap(FeatureEncoder.encodeSequence(frames, length: 24))
         let array = try XCTUnwrap(provider.featureValue(for: "landmarks")?.multiArrayValue)
         XCTAssertEqual(array.shape.map(\.intValue), [1, 24, 198])
+    }
+
+    /// The resampling must span the entire capture: first output frame from the first input,
+    /// last from the last. Truncation would make both come from the tail.
+    func testResamplingCoversTheWholeSpan() {
+        let frames = (0..<100).map { frame(ts: TimeInterval($0)) }
+        let picked = FeatureEncoder.resampleForTesting(frames, to: 24)
+        XCTAssertEqual(picked.count, 24)
+        XCTAssertEqual(picked.first?.timestamp, 0, "must start at the beginning of the sign")
+        XCTAssertEqual(picked.last?.timestamp, 99, "must end at the most recent frame")
+    }
+
+    /// A single frame is valid input and must fill the window rather than crash.
+    func testSingleFrameFillsWindow() {
+        let picked = FeatureEncoder.resampleForTesting([frame(ts: 5)], to: 24)
+        XCTAssertEqual(picked.count, 24)
+        XCTAssertTrue(picked.allSatisfy { $0.timestamp == 5 })
     }
 
     func testEmptyInputReturnsNil() {

@@ -30,7 +30,11 @@ final class CoreMLSignRecognizer: SignRecognizing {
     private let log = Logger(subsystem: "ASLVisionPro", category: "Recognizer")
     private let model: MLModel
     private let labels: [String]
-    private let confidenceThreshold: Float
+    /// Adjustable at runtime so the gate can be calibrated against real signing rather than
+    /// guessed. Validation accuracy on a held-out set says little about where this should sit
+    /// on a phone, in a room, with one person's hands.
+    nonisolated(unsafe) var confidenceThreshold: Float
+    nonisolated(unsafe) var requiredStreak: Int
 
     /// The most recent prediction, published whether or not it cleared the threshold.
     ///
@@ -47,7 +51,6 @@ final class CoreMLSignRecognizer: SignRecognizing {
     /// held through a window persists.
     private nonisolated(unsafe) var streakLabel: String?
     private nonisolated(unsafe) var streakCount = 0
-    private let requiredStreak: Int
 
     /// Label the training set uses for "not signing".
     static let restLabel = "NONE"

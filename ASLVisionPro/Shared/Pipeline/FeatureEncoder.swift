@@ -127,10 +127,28 @@ enum FeatureEncoder {
         return max(0.05, sqrt(dx * dx + dy * dy))   // guard against divide-by-zero
     }
 
+    /// Resample a captured span to the model's fixed length.
+    ///
+    /// This must match how the training clips were time-normalized: each clip there is a whole
+    /// sign, resampled to `sequenceLength` regardless of how long it took, so the model learned
+    /// signs stretched across the full window. Truncating to the most recent frames instead —
+    /// which is what this used to do — feeds the model the tail end of a sign at a completely
+    /// different temporal scale, and cuts off the start entirely.
+    /// Test seam for the resampling contract, which is otherwise only observable through an
+    /// MLMultiArray and easy to get silently wrong.
+    static func resampleForTesting(_ frames: [SignFrame], to length: Int) -> [SignFrame] {
+        padOrTrim(frames, to: length)
+    }
+
     private static func padOrTrim(_ frames: [SignFrame], to length: Int) -> [SignFrame] {
-        if frames.count == length { return frames }
-        if frames.count > length { return Array(frames.suffix(length)) }
-        // Left-pad by repeating the first frame so timing stays right-aligned to "now".
-        return Array(repeating: frames.first!, count: length - frames.count) + frames
+        guard frames.count != length else { return frames }
+        guard frames.count > 1 else {
+            return Array(repeating: frames[0], count: length)
+        }
+        // Same mapping as the Python importer: evenly spaced indices, rounded.
+        let step = Double(frames.count - 1) / Double(length - 1)
+        return (0..<length).map { i in
+            frames[min(frames.count - 1, Int((Double(i) * step).rounded()))]
+        }
     }
 }
