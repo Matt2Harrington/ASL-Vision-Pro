@@ -36,6 +36,14 @@ final class FoundationModelGlossInterpreter: GlossInterpreting {
     - If the glosses are too few or incoherent to translate, reply with exactly: UNCLEAR
     """
 
+    /// Set once inference has failed repeatedly, so we stop paying for calls that cannot
+    /// succeed. `isAvailable` is necessary but not sufficient: it reports true in the
+    /// simulator, where the model assets are absent and every request fails. Without this the
+    /// app would claim to be translating while silently declining forever.
+    private var consecutiveFailures = 0
+    private var isUsable = true
+    private let failureLimit = 2
+
     /// Fails init when the system model isn't ready (unsupported device, Apple Intelligence
     /// off, model still downloading) so the factory can fall back cleanly.
     init?() {
@@ -44,6 +52,7 @@ final class FoundationModelGlossInterpreter: GlossInterpreting {
     }
 
     func interpret(_ glosses: [String]) async -> String? {
+        guard isUsable else { return nil }
         // One or two glosses carry too little structure to translate; showing them raw is
         // more honest than inventing a sentence around them.
         guard glosses.count >= 2 else { return nil }
@@ -51,11 +60,16 @@ final class FoundationModelGlossInterpreter: GlossInterpreting {
         let prompt = "Translate this ASL gloss sequence: " + glosses.joined(separator: " ")
         do {
             let response = try await session.respond(to: prompt)
+            consecutiveFailures = 0
             let text = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !text.isEmpty, text.uppercased() != "UNCLEAR" else { return nil }
             return text
         } catch {
-            log.error("On-device translation failed: \(error.localizedDescription)")
+            consecutiveFailures += 1
+            if consecutiveFailures >= failureLimit {
+                isUsable = false
+                log.notice("On-device model reported available but cannot run (\(error.localizedDescription)) — showing glosses instead.")
+            }
             return nil
         }
     }
