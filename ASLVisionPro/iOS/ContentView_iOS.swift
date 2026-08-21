@@ -1,26 +1,26 @@
 import SwiftUI
 
-/// iOS camera screen. Full-screen viewfinder with live captions, plus a tracking overlay.
+/// iOS camera screen. Deliberately sparse: the camera feed is the subject, and the only thing
+/// worth reading at a glance is what the model currently thinks and how sure it is.
 ///
-/// The overlay exists because it's the one part of this screen that produces real output
-/// today: Vision genuinely finds hands, while recognition is still a stub. It answers the
-/// question that actually matters before collecting training data — does tracking hold up in
-/// this room, at this distance, with these hands?
+/// Accumulated captions and the English translation are available but collapsed by default —
+/// during live signing they pile up faster than they can be read, and a long sentence on
+/// screen implies more certainty than a 5-sign model has earned.
 struct ContentView_iOS: View {
     @State private var camera: iPhoneCameraSource
     @State private var pipeline: TranslationPipeline
     @State private var showTracking = true
+    @State private var showTranscript = false
 
     init() {
         let cam = iPhoneCameraSource()
         _camera = State(initialValue: cam)
-        // Recognizer comes from the shared factory — identical selection logic to visionOS.
         _pipeline = State(initialValue: TranslationPipeline(source: cam,
                                                             recognizer: RecognizerFactory.makeRecognizer()))
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             CameraPreview(session: camera.session)
                 .ignoresSafeArea()
 
@@ -30,81 +30,111 @@ struct ContentView_iOS: View {
                     .allowsHitTesting(false)
             }
 
-            VStack(spacing: 12) {
-                if showTracking { trackingReadout }
-                if showTracking, let guess = pipeline.lastGuess { guessReadout(guess) }
-
-                CaptionView(text: pipeline.caption,
-                            translation: pipeline.translation,
-                            isTranslating: pipeline.isTranslating)
-
-                Text("Experimental — recognition may be wrong. Do not rely on it for critical communication.")
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                    .shadow(radius: 3)
+            VStack {
+                Spacer()
+                guessPill
+                if showTranscript { transcript }
+                controls
             }
-            .padding(.bottom, 32)
+            .padding(.bottom, 28)
         }
-        .overlay(alignment: .topTrailing) {
-            Toggle(isOn: $showTracking) {
-                Label("Tracking", systemImage: "point.3.connected.trianglepath.dotted")
-            }
-            .toggleStyle(.button)
-            .labelStyle(.iconOnly)
-            .padding()
-        }
+        .overlay(alignment: .topTrailing) { trackingToggle }
         .statusBarHidden()
         .onAppear { pipeline.start() }
         .onDisappear { pipeline.stop() }
     }
 
-    /// Live per-region detection state. Vision reports each region independently, so seeing
-    /// which ones are landing tells you whether to move closer, improve lighting, or reframe.
-    private var trackingReadout: some View {
-        let frame = pipeline.latestFrame
-        return HStack(spacing: 10) {
-            pill("L hand", detected: !(frame?.leftHand.isEmpty ?? true), tint: .cyan)
-            pill("R hand", detected: !(frame?.rightHand.isEmpty ?? true), tint: .cyan)
-            pill("Body", detected: !(frame?.body.isEmpty ?? true), tint: .yellow)
-            pill("Face", detected: !(frame?.face.isEmpty ?? true), tint: .pink)
+    // MARK: - The one thing worth reading
+
+    /// Current sign and confidence. Green once it clears the gate, dim while it doesn't —
+    /// so a near miss is visible rather than looking like nothing happened.
+    @ViewBuilder
+    private var guessPill: some View {
+        if let guess = pipeline.lastGuess {
+            HStack(spacing: 12) {
+                Text(guess.label)
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundStyle(guess.accepted ? .green : .white.opacity(0.55))
+                Text("\(Int(guess.confidence * 100))%")
+                    .font(.system(size: 26, weight: .medium, design: .rounded).monospacedDigit())
+                    .foregroundStyle(.white.opacity(0.75))
+            }
+            .padding(.horizontal, 26)
+            .padding(.vertical, 14)
+            .background(.black.opacity(0.5), in: Capsule())
+            .animation(.smooth(duration: 0.15), value: guess.label)
+            .contentTransition(.numericText())
+        } else {
+            Text("Sign to begin")
+                .font(.title3)
+                .foregroundStyle(.white.opacity(0.6))
+                .padding(.vertical, 22)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(.black.opacity(0.45), in: Capsule())
     }
 
-    /// The model's best guess and how sure it is. A rejected guess is shown greyed rather
-    /// than hidden — seeing "NO at 41%" tells you the model is close, which an empty caption
-    /// does not.
-    private func guessReadout(_ guess: CoreMLSignRecognizer.Peek) -> some View {
-        HStack(spacing: 8) {
-            Text(guess.label)
-                .font(.headline)
-                .foregroundStyle(guess.accepted ? .green : .white.opacity(0.7))
-            Text("\(Int(guess.confidence * 100))%")
-                .font(.subheadline.monospacedDigit())
-                .foregroundStyle(.white.opacity(0.8))
-            if !guess.accepted {
-                Text("below threshold")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
+    // MARK: - Optional detail
+
+    private var transcript: some View {
+        VStack(spacing: 6) {
+            if let translation = pipeline.translation {
+                Text(translation)
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+            }
+            if !pipeline.caption.isEmpty {
+                Text(pipeline.caption)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.white.opacity(0.6))
+                    .lineLimit(2)
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(.black.opacity(0.45), in: Capsule())
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(.black.opacity(0.4), in: RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
     }
 
-    private func pill(_ label: String, detected: Bool, tint: Color) -> some View {
-        HStack(spacing: 5) {
-            Circle()
-                .fill(detected ? tint : .white.opacity(0.25))
-                .frame(width: 8, height: 8)
-            Text(label)
-                .font(.caption2.weight(.medium))
-                .foregroundStyle(detected ? .white : .white.opacity(0.5))
+    // MARK: - Controls
+
+    private var controls: some View {
+        HStack(spacing: 10) {
+            smallButton(showTranscript ? "text.bubble.fill" : "text.bubble") {
+                showTranscript.toggle()
+            }
+            smallButton("arrow.counterclockwise") { pipeline.reset() }
+            Text("Experimental")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
         }
+        .padding(.top, 14)
+    }
+
+    private func smallButton(_ symbol: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 34, height: 34)
+                .background(.black.opacity(0.45), in: Circle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Tracking state lives in the toggle itself — the four detection pills were more text
+    /// than the screen could carry, and the dots already show what's tracked.
+    private var trackingToggle: some View {
+        Button { showTracking.toggle() } label: {
+            Image(systemName: "point.3.connected.trianglepath.dotted")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(showTracking ? .cyan : .white.opacity(0.6))
+                .frame(width: 38, height: 38)
+                .background(.black.opacity(0.45), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .padding(.trailing, 16)
+        .padding(.top, 12)
     }
 }

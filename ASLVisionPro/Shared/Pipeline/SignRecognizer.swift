@@ -40,10 +40,22 @@ final class CoreMLSignRecognizer: SignRecognizing {
     struct Peek: Sendable { let label: String; let confidence: Float; let accepted: Bool }
     private(set) nonisolated(unsafe) var lastPeek: Peek?
 
-    init(model: MLModel, labels: [String], confidenceThreshold: Float = 0.6) {
+    /// A softmax over N signs always names one of them, however unlike the input is to
+    /// anything the model saw in training — there is no "nothing" class, so pointing the
+    /// camera at a room still yields a confident answer. Requiring the same label across
+    /// consecutive windows filters that: noise jumps between classes, whereas a real sign
+    /// held through a window persists.
+    private nonisolated(unsafe) var streakLabel: String?
+    private nonisolated(unsafe) var streakCount = 0
+    private let requiredStreak: Int
+
+    init(model: MLModel, labels: [String],
+         confidenceThreshold: Float = 0.75,
+         requiredStreak: Int = 2) {
         self.model = model
         self.labels = labels
         self.confidenceThreshold = confidenceThreshold
+        self.requiredStreak = requiredStreak
     }
 
     func recognize(_ window: SignSegmenter.Window) async -> RecognitionResult? {
@@ -54,9 +66,22 @@ final class CoreMLSignRecognizer: SignRecognizing {
                 lastPeek = nil
                 return nil
             }
-            let accepted = confidence >= confidenceThreshold
+            if label == streakLabel {
+                streakCount += 1
+            } else {
+                streakLabel = label
+                streakCount = 1
+            }
+
+            let confident = confidence >= confidenceThreshold
+            let stable = streakCount >= requiredStreak
+            let accepted = confident && stable
             lastPeek = Peek(label: label, confidence: confidence, accepted: accepted)
             guard accepted else { return nil }
+
+            // Consume the streak so one sustained sign emits once rather than repeating for
+            // as long as it is held.
+            streakCount = 0
             let ts = window.frames.last?.timestamp ?? 0
             return RecognitionResult(text: label, confidence: confidence, timestamp: ts, kind: .sign)
         } catch {
