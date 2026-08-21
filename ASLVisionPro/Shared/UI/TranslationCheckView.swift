@@ -12,6 +12,7 @@ struct TranslationCheckView: View {
     @State private var results: [Row] = []
     @State private var customInput = ""
     @State private var isRunning = false
+    @FocusState private var inputFocused: Bool
 
     /// Sequences chosen to cover the cases that actually stress the prompt: fingerspelled
     /// names, dropped function words, ASL question order, and negation.
@@ -40,6 +41,10 @@ struct TranslationCheckView: View {
             }
             .padding(24)
         }
+        // Swiping the list down dismisses the keyboard, and tapping outside the field does
+        // too — without these the field traps the keyboard with no way to close it.
+        .scrollDismissesKeyboard(.interactively)
+        .onTapGesture { inputFocused = false }
         .navigationTitle("Translation Check")
     }
 
@@ -83,11 +88,18 @@ struct TranslationCheckView: View {
                         .textFieldStyle(.plain)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.characters)
+                        .focused($inputFocused)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            inputFocused = false
+                            Task { await runCustom() }
+                        }
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
                         .background(.quaternary, in: RoundedRectangle(cornerRadius: Theme.innerRadius))
 
                     Button {
+                        inputFocused = false
                         Task { await runCustom() }
                     } label: {
                         Label("Translate", systemImage: "arrow.right")

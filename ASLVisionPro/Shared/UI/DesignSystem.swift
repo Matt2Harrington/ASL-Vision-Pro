@@ -119,6 +119,28 @@ struct ScreenHeader: View {
     }
 }
 
+/// Floating close control. Modes are presented full-screen (the camera ones edge to edge),
+/// so they need a dismiss affordance that stays legible over a live camera feed rather than
+/// relying on a navigation bar that isn't there.
+struct CloseButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "xmark")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.primary)
+                .frame(width: 38, height: 38)
+                .background(.regularMaterial, in: Circle())
+                .overlay(Circle().stroke(.white.opacity(0.25), lineWidth: 0.5))
+                .shadow(radius: 4)
+        }
+        .buttonStyle(.plain)
+        .contentShape(Circle())
+        .accessibilityLabel("Close")
+    }
+}
+
 /// Shown whenever no trained model is bundled, so simulated output is never mistaken for
 /// recognition. Deliberately prominent rather than a footnote.
 struct SimulatedBanner: View {

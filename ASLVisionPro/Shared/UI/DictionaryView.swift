@@ -11,6 +11,7 @@ struct DictionaryView: View {
     @State private var query = ""
     @State private var selectedCategory: SignEntry.Category?
     @State private var selected: SignEntry?
+    @FocusState private var searchFocused: Bool
 
     private var results: [SignEntry] {
         let base = selectedCategory.map { catalog.entries(in: $0) } ?? catalog.entries
@@ -43,6 +44,7 @@ struct DictionaryView: View {
                 }
                 .padding(28)
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Dictionary")
             .navigationDestination(item: $selected) { SignDetailView(entry: $0) }
         }
@@ -56,8 +58,11 @@ struct DictionaryView: View {
             TextField("Search signs", text: $query)
                 .textFieldStyle(.plain)
                 .autocorrectionDisabled()
+                .focused($searchFocused)
+                .submitLabel(.search)
+                .onSubmit { searchFocused = false }
             if !query.isEmpty {
-                Button { query = "" } label: {
+                Button { query = ""; searchFocused = false } label: {
                     Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)

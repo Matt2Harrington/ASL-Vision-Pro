@@ -22,8 +22,26 @@ struct ModeSelectionView_iOS: View {
 
     var body: some View {
         switch mode {
+        case nil:
+            chooser
+        default:
+            // Every mode is presented full-screen, so each needs its own dismiss control —
+            // there's no navigation bar to fall back on, and the camera modes cover the
+            // entire display.
+            modeContent
+                .overlay(alignment: .topLeading) {
+                    CloseButton { mode = nil }
+                        .padding(.leading, 16)
+                        .padding(.top, 12)
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var modeContent: some View {
+        switch mode {
         case .tutor:
-            TutorView_iOS(lesson: starterLesson, onBack: { mode = nil })
+            TutorView_iOS(lesson: starterLesson)
         case .interpret:
             ContentView_iOS()
         case .dictionary:
@@ -41,7 +59,7 @@ struct ModeSelectionView_iOS: View {
         case .translationCheck:
             NavigationStack { TranslationCheckView() }
         case nil:
-            chooser
+            EmptyView()
         }
     }
 
@@ -143,7 +161,6 @@ struct ModeSelectionView_iOS: View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle").font(.largeTitle)
             Text(message).foregroundStyle(.secondary)
-            Button("Back") { mode = nil }
         }
         .padding(40)
     }
@@ -154,9 +171,8 @@ struct ModeSelectionView_iOS: View {
 struct TutorView_iOS: View {
     @State private var camera: iPhoneCameraSource
     @State private var session: TutorSession
-    let onBack: () -> Void
 
-    init(lesson: [String], onBack: @escaping () -> Void) {
+    init(lesson: [String]) {
         let cam = iPhoneCameraSource()
         _camera = State(initialValue: cam)
         _session = State(initialValue: TutorSession(
@@ -164,7 +180,6 @@ struct TutorView_iOS: View {
             source: CameraSignFrameSource(source: cam),
             verifier: RecognizerFactory.makeVerifier()
         ))
-        self.onBack = onBack
     }
 
     var body: some View {
@@ -201,12 +216,9 @@ struct TutorView_iOS: View {
                         .foregroundStyle(attempt.isCorrect ? .green : .orange)
                 }
 
-                HStack(spacing: 20) {
-                    Button("Back", action: onBack)
-                    Button("Skip") { session.skip() }
-                        .disabled(session.currentTarget == nil)
-                }
-                .buttonStyle(.borderedProminent)
+                Button("Skip") { session.skip() }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(session.currentTarget == nil)
             }
             .padding(.bottom, 30)
         }
