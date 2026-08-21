@@ -11,6 +11,9 @@ struct ContentView_iOS: View {
     @State private var pipeline: TranslationPipeline
     @State private var showTracking = true
     @State private var showTranscript = false
+    // The camera source isn't observable, so its settings are mirrored here to drive the UI.
+    @State private var usingFront = true
+    @State private var mirrored = true
 
     init() {
         let cam = iPhoneCameraSource()
@@ -105,10 +108,21 @@ struct ContentView_iOS: View {
                 showTranscript.toggle()
             }
             smallButton("arrow.counterclockwise") { pipeline.reset() }
-            smallButton("arrow.triangle.2.circlepath.camera") { camera.flip() }
-            Text("Experimental")
+            smallButton("arrow.triangle.2.circlepath.camera") {
+                camera.flip()
+                usingFront = camera.position == .front
+                mirrored = camera.isMirrored
+            }
+            smallButton(mirrored ? "flip.horizontal.fill" : "flip.horizontal") {
+                camera.isMirrored.toggle()
+                mirrored = camera.isMirrored
+            }
+            // Naming the active combination matters while comparing them: otherwise a good
+            // or bad result can't be attributed to a setting.
+            Text("\(usingFront ? "Front" : "Back")\(mirrored ? " · mirrored" : "")")
                 .font(.caption2)
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(.white.opacity(0.6))
+                .contentTransition(.opacity)
         }
         .padding(.top, 14)
     }

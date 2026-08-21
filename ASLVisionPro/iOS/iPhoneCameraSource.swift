@@ -18,8 +18,19 @@ final class iPhoneCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputS
     /// filming someone else.
     private(set) var position: AVCaptureDevice.Position
 
-    init(position: AVCaptureDevice.Position = .front) {
+    /// Whether frames are mirrored before landmark extraction.
+    ///
+    /// This is deliberately independent of which camera is active. Mirroring flips a hand's
+    /// apparent chirality, so it decides whether the signer's right hand lands in the right
+    /// hand's feature slots — which matters a great deal to a hands-only model. The corpora we
+    /// train on were captured on selfie cameras, but whether their frames were mirrored before
+    /// landmarks were extracted isn't documented, so this is exposed as a control to settle
+    /// empirically rather than assumed.
+    var isMirrored: Bool
+
+    init(position: AVCaptureDevice.Position = .front, mirrored: Bool? = nil) {
         self.position = position
+        self.isMirrored = mirrored ?? (position == .front)
         super.init()
     }
 
@@ -92,17 +103,28 @@ final class iPhoneCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputS
                        didOutput sampleBuffer: CMSampleBuffer,
                        from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        // Portrait: Vision needs `.right` to read a back-camera frame upright. The front
-        // camera is additionally mirrored, so it needs the mirrored variant — otherwise every
-        // hand arrives with its chirality flipped, which for a hands-only model means the
-        // signer's right hand lands in the left hand's feature slots.
-        let orientation: CGImagePropertyOrientation = position == .front ? .leftMirrored : .right
         continuation?.yield(SourceFrame(pixelBuffer: pixelBuffer, orientation: orientation))
     }
 
-    /// Swap cameras and restart capture.
+    /// Portrait orientation for the active camera, with mirroring applied.
+    ///
+    /// Vision needs `.right` to read a portrait back-camera frame upright and `.left` for the
+    /// front camera, which is physically rotated the other way; the `Mirrored` variants add
+    /// the horizontal flip.
+    private var orientation: CGImagePropertyOrientation {
+        switch (position, isMirrored) {
+        case (.front, true):  return .leftMirrored
+        case (.front, false): return .left
+        case (_, true):       return .rightMirrored
+        case (_, false):      return .right
+        }
+    }
+
+    /// Swap cameras. Mirroring follows the camera's usual convention, but can be overridden
+    /// afterwards with `isMirrored`.
     func flip() {
         position = (position == .front) ? .back : .front
+        isMirrored = (position == .front)
         queue.async { [weak self] in
             guard let self else { return }
             let wasRunning = self.session.isRunning
