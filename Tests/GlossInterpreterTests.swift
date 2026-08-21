@@ -28,10 +28,23 @@ final class GlossInterpreterTests: XCTestCase {
         XCTAssertNil(out, "nil means no content, which the UI renders differently from an empty string")
     }
 
-    /// The factory must always return something usable, on any OS version.
-    func testFactoryAlwaysProducesAnInterpreter() async {
-        let out = await GlossInterpreterFactory.make().interpret(["HELLO", "FRIEND"])
-        XCTAssertNotNil(out, "factory must degrade to passthrough rather than produce nothing")
+    /// The factory must always hand back an interpreter, on any OS version and whether or
+    /// not a language model is present.
+    ///
+    /// Note it does NOT guarantee output: a real model may decline (too few glosses,
+    /// incoherent input), which is deliberate. The pipeline keeps showing the raw glosses in
+    /// that case, so declining degrades to honest gloss output rather than to nothing.
+    func testFactoryAlwaysProducesAnInterpreter() {
+        _ = GlossInterpreterFactory.make()
+    }
+
+    /// Declining is a valid, expected outcome — not a failure the caller must handle as an
+    /// error. This pins that contract so a future change doesn't start throwing instead.
+    func testInterpreterMayDeclineWithoutFailing() async {
+        let declining = RecordingInterpreter(stubbed: nil)
+        let out = await declining.interpret(["HELLO"])
+        XCTAssertNil(out)
+        XCTAssertEqual(declining.calls, [["HELLO"]], "a declined call must still be a normal call")
     }
 
     // MARK: - Honesty guarantees
