@@ -89,3 +89,37 @@ classifier in three ways:
 
 Pairs with the Swift `ContinuousSignRecognizer`. A true seq2seq/SLT model (fluent English,
 autoregressive decode) is the further step beyond CTC.
+
+## Resuming an interrupted download
+
+Kaggle rate limits per-file downloads to roughly 500–600 files, then returns HTTP 429 for
+longer than an hour. `fetch_subset.py` is resumable and skips what's already on disk, so a
+large vocabulary is fetched across several sessions rather than one.
+
+The signs still wanted are listed in `remaining_signs.json`:
+
+```bash
+cd training
+.venv/bin/python fetch_subset.py --train-csv ~/Downloads/train.csv \
+    --signs $(python3 -c "import json;print(' '.join(json.load(open('remaining_signs.json'))))") \
+    --per-sign 100
+```
+
+Run in bash, not zsh — zsh doesn't word-split the unquoted substitution, so all the sign names
+arrive as a single argument and nothing matches.
+
+Then retrain on whatever arrived. `--min-per-class` drops partially fetched signs, so this
+never has to wait for the whole set:
+
+```bash
+.venv/bin/python import_kaggle.py --train-csv ~/Downloads/train.csv --data data/asl_signs \
+    --labels labels_kaggle.json --out data/next.npz --max-per-class 100 --min-per-class 60
+.venv/bin/python add_none_class.py --in data/next.npz --labels labels_kaggle.json --out data/next_none.npz
+.venv/bin/python train.py --data data/next_none.npz --labels labels_kaggle.json --epochs 80 --out ckpt.pt
+.venv/bin/python export_coreml.py --ckpt ckpt.pt --labels labels_kaggle.json --out SignModel.mlpackage --quantize
+cp -R SignModel.mlpackage ../ASLVisionPro/Shared/Models/
+cp labels_kaggle.json ../ASLVisionPro/Shared/Resources/labels.json
+```
+
+Every sign in the queue already has a dictionary entry, so no content work is needed — the
+formation hints appear in Practice as soon as a sign is trained.
