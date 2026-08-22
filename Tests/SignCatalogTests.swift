@@ -28,6 +28,17 @@ final class SignCatalogTests: XCTestCase {
         XCTAssertNil(catalog.entry(for: "NOT-A-REAL-SIGN"))
     }
 
+    /// Model labels come from dataset vocabularies that punctuate differently. A sign must
+    /// still find its formation hints when the label omits a hyphen we use, or Practice
+    /// silently loses its guidance for that sign.
+    func testLookupIgnoresPunctuationDifferences() {
+        let catalog = makeCatalog()
+        XCTAssertNotNil(catalog.entry(for: "THANKYOU"),
+                        "dataset label THANKYOU should resolve to THANK-YOU")
+        XCTAssertNotNil(catalog.entry(for: "THANK-YOU"))
+        XCTAssertNil(catalog.entry(for: "NOTASIGN"))
+    }
+
     func testSearchMatchesGlossAndMeaning() {
         let catalog = makeCatalog()
         XCTAssertTrue(catalog.search("hello").contains { $0.gloss == "HELLO" })

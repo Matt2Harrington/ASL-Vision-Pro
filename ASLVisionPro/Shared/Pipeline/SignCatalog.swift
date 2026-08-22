@@ -77,7 +77,16 @@ final class SignCatalog {
     }
 
     func entry(for gloss: String) -> SignEntry? {
-        entries.first { $0.gloss == gloss }
+        if let exact = entries.first(where: { $0.gloss == gloss }) { return exact }
+        // Model labels come from dataset vocabularies that punctuate differently — "THANKYOU"
+        // against our "THANK-YOU". Matching on letters alone keeps a sign's formation hints
+        // available rather than silently dropping them over a hyphen.
+        let key = Self.normalize(gloss)
+        return entries.first { Self.normalize($0.gloss) == key }
+    }
+
+    private static func normalize(_ gloss: String) -> String {
+        gloss.uppercased().filter(\.isLetter)
     }
 
     func entries(in category: SignEntry.Category) -> [SignEntry] {
