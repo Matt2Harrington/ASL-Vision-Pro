@@ -136,6 +136,7 @@ def main():
     done = skipped = failed = 0
     consecutive = 0
     rounds = 0
+    done_at_last_throttle = -1
 
     for i, row in enumerate(chosen, 1):
         dest = os.path.join(args.out, row["path"])
@@ -178,6 +179,17 @@ def main():
                           "and continue automatically.")
                     break
                 rounds += 1
+                # If the previous pause bought nothing, waiting the same amount again won't
+                # either — Kaggle's window is longer than the cooldown. Stop rather than
+                # cycle, since repeated requests while limited keep it refreshed.
+                if done == done_at_last_throttle:
+                    print(f"\n  The last pause produced no downloads, so the rate-limit window "
+                          f"is longer than {args.cooldown // 60} min. Stopping with {done} files "
+                          f"fetched this run.\n  Re-run later (an hour or more) — downloaded "
+                          f"files are skipped. A longer --cooldown may also work.")
+                    break
+                done_at_last_throttle = done
+
                 if rounds > args.max_rounds:
                     print(f"\nStopping after {args.max_rounds} throttle pauses. "
                           f"Re-run to continue — downloaded files are skipped.")
