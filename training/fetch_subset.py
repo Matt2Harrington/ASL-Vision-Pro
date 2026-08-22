@@ -22,6 +22,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import tempfile
 import zipfile
 
@@ -127,28 +128,50 @@ def main():
 
     os.makedirs(args.out, exist_ok=True)
     done = skipped = failed = 0
+    consecutive = 0
+
     for i, row in enumerate(chosen, 1):
         dest = os.path.join(args.out, row["path"])
         if os.path.exists(dest):
             skipped += 1
             continue
         os.makedirs(os.path.dirname(dest), exist_ok=True)
-        r = subprocess.run(
-            ["kaggle", "competitions", "download", "-c", COMP,
-             "-f", row["path"], "-p", os.path.dirname(dest), "--force"],
-            capture_output=True, text=True,
-        )
-        if r.returncode != 0:
-            failed += 1
-            if failed <= 3:
-                print(f"  ! {row['path']}: {r.stderr.strip().splitlines()[-1] if r.stderr else 'failed'}")
-            if failed > 20:
-                sys.exit("\nToo many failures — check that the competition rules are accepted.")
-        else:
+
+        # Kaggle throttles sustained request bursts, and a throttled request looks exactly
+        # like a failed one. Retrying with a growing pause distinguishes them: a rate limit
+        # clears, a genuine error doesn't.
+        ok = False
+        for attempt in range(3):
+            r = subprocess.run(
+                ["kaggle", "competitions", "download", "-c", COMP,
+                 "-f", row["path"], "-p", os.path.dirname(dest), "--force"],
+                capture_output=True, text=True,
+            )
+            if r.returncode == 0:
+                ok = True
+                break
+            time.sleep(2 ** attempt * 3)   # 3s, 6s, 12s
+
+        if ok:
             unzip_in_place(dest)
             done += 1
+            consecutive = 0
+        else:
+            failed += 1
+            consecutive += 1
+            if consecutive <= 3:
+                print(f"  ! {row['path']}: {r.stderr.strip().splitlines()[-1] if r.stderr else 'failed'}")
+            # Only give up on a sustained run of failures. Counting cumulatively would abort a
+            # long download over scattered throttling it had already recovered from.
+            if consecutive >= 25:
+                print("\nAborting: 25 consecutive failures. Either the competition rules "
+                      "aren't accepted, or Kaggle is rate limiting hard — wait and re-run; "
+                      "already-downloaded files are skipped.")
+                break
+
         if i % 25 == 0 or i == len(chosen):
-            print(f"  {i}/{len(chosen)}  downloaded={done} skipped={skipped} failed={failed}")
+            print(f"  {i}/{len(chosen)}  downloaded={done} skipped={skipped} failed={failed}",
+                  flush=True)
 
     print(f"\ndone: {done} downloaded, {skipped} already present, {failed} failed -> {args.out}")
 

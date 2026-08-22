@@ -133,6 +133,10 @@ def main():
     ap.add_argument("--data", default="data/asl_signs")
     ap.add_argument("--labels", default="labels_kaggle.json")
     ap.add_argument("--out", default="data/kaggle.npz")
+    ap.add_argument("--min-per-class", type=int, default=20,
+                    help="drop signs with fewer clips than this — a class with a\n                          handful of examples cannot be learned and skews the rest")
+    ap.add_argument("--max-per-class", type=int, default=0,
+                    help="cap clips per sign so partial downloads don't skew classes")
     ap.add_argument("--keep-depth", action="store_true",
                     help="keep MediaPipe z (only correct if inference also supplies depth)")
     args = ap.parse_args()
@@ -143,6 +147,20 @@ def main():
     index = index[index["path"].isin(have)]
     if index.empty:
         raise SystemExit(f"No downloaded clips found under {args.data}")
+
+    if args.min_per_class:
+        counts = index["sign"].value_counts()
+        thin = counts[counts < args.min_per_class]
+        if len(thin):
+            print(f"dropping {len(thin)} sign(s) with < {args.min_per_class} clips: "
+                  f"{', '.join(thin.index)}")
+            index = index[~index["sign"].isin(thin.index)]
+
+    if args.max_per_class:
+        # Downloads fill sign by sign, so a run stopped partway leaves some classes far
+        # larger than others. Capping keeps training balanced without waiting for every clip.
+        index = (index.groupby("sign", group_keys=False)
+                      .apply(lambda g: g.head(args.max_per_class)))
 
     signs = sorted(index["sign"].unique())
     label_index = {s: i for i, s in enumerate(signs)}

@@ -5,11 +5,11 @@ recognizes nothing, so a fresh clone would have little to test.
 
 | | |
 |---|---|
-| Classes | HELLO · NO · PLEASE · WATER · YES · NONE |
-| Accuracy | 91.8% on **held-out signers** (chance ≈ 17%) |
-| Trained on | 500 clips, 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
+| Classes | BAD · BOOK · BYE · DAD · HELLO · NO · PLEASE · WATER · YES · NONE |
+| Accuracy | 82.3% on **held-out signers** (chance = 10%) |
+| Trained on | 900 clips (100/sign), 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
 | Input | `landmarks` [1, 24, 198] |
-| Output | `probabilities` [1, 6] |
+| Output | `probabilities` [1, 10] |
 | Spec | `config/feature_spec.json` **v3** — hands-only, depth zeroed |
 
 ## It is paired with two other files
@@ -41,5 +41,9 @@ finds it by name with no code change.
 
 ## Honest scope
 
-Five signs is a demo, not a product, and 91.8% is measured on the source corpus — real-world
+Nine signs is a demo, not a product, and 82.3% is measured on the source corpus — real-world
 accuracy on a phone in a room is a different and unverified number.
+
+Accuracy fell from 91.8% when the vocabulary was five signs. That is expected: more classes is
+a harder problem at the same amount of data per class. Adding clips per sign is the lever that
+buys it back, and the dataset holds roughly 380 per sign against the 100 used here.
