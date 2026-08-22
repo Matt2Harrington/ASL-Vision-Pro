@@ -5,11 +5,11 @@ recognizes nothing, so a fresh clone would have little to test.
 
 | | |
 |---|---|
-| Classes | BAD · BOOK · BYE · DAD · DRINK · FINISH · FOOD · HAPPY · HELLO · HOME · HOT · NO · PLEASE · WATER · YES · NONE |
-| Accuracy | 76.9% on **held-out signers** (chance ≈ 6%) |
-| Trained on | 1,468 clips (100/sign), 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
+| Classes | BAD · BOOK · BYE · DAD · DRINK · FINISH · FOOD · HAPPY · HELLO · HOME · HOT · HUNGRY · LIKE · NO · PLEASE · WATER · YES · NONE |
+| Accuracy | 76.6% on **held-out signers** (chance ≈ 6%) |
+| Trained on | 1,657 clips (100/sign), 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
 | Input | `landmarks` [1, 24, 198] |
-| Output | `probabilities` [1, 16] |
+| Output | `probabilities` [1, 18] |
 | Spec | `config/feature_spec.json` **v3** — hands-only, depth zeroed |
 
 ## It is paired with two other files
@@ -41,11 +41,12 @@ finds it by name with no code change.
 
 ## Honest scope
 
-Fifteen signs is a demo, not a product, and 76.9% is measured on the source corpus — real-world
-accuracy on a phone in a room is a different and unverified number.
+Seventeen signs is a demo, not a product, and 76.6% is measured on the source corpus —
+real-world accuracy on a phone in a room is a different and unverified number.
 
 Accuracy has tracked vocabulary size at a fixed 100 clips per sign: 91.8% at five signs, 82.3%
-at nine, 76.9% at fifteen. That is the expected trade, not a regression — more classes is a
+at nine, 76.9% at fifteen, 76.6% at seventeen — the curve is flattening, so the last two signs
+cost essentially nothing. That is the expected trade, not a regression — more classes is a
 harder problem on the same data per class. The lever that buys it back is clips per sign, and
 the dataset holds roughly 380 against the 100 used here.
 
