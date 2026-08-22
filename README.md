@@ -55,10 +55,13 @@ differ.
 Requires Xcode 26+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```bash
-export DEVELOPMENT_TEAM=XXXXXXXXXX   # your Apple Team ID; omit for simulator-only
 xcodegen generate
 open ASLVisionPro.xcodeproj
 ```
+
+Builds with no signing setup — the project ships with no development team and neutral
+`com.example` bundle identifiers. For a physical device, pick your own team in Xcode and change
+the bundle prefix in `project.yml`; a **free Apple ID works**.
 
 **Setting up from scratch?** [SETUP.md](SETUP.md) walks through it step by step, including
 signing to a physical iPhone and the failures worth knowing about in advance.

@@ -5,9 +5,13 @@
 #   • ASLVisionPro      — visionOS, enterprise main-camera passthrough
 #   • ASLVisionPro-iOS  — iOS, iPhone camera (backup, no special entitlement)
 
+# Bundle identifiers use com.example so nothing is tied to one developer account. Change the
+# prefix below to your own reverse-DNS before running on a physical device — free provisioning
+# registers the identifier against your team, so a shared prefix collides between people.
+
 name: ASLVisionPro
 options:
-  bundleIdPrefix: com.mattharrington
+  bundleIdPrefix: com.example
   deploymentTarget:
     visionOS: "2.0"
     iOS: "17.0"
@@ -29,7 +33,7 @@ targets:
       - path: ASLVisionPro/visionOS
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ASLVisionPro
         INFOPLIST_FILE: ASLVisionPro/visionOS/Support/Info.plist
         # DEV DEFAULT: no-camera entitlements so device builds work while Apple's
         # main-camera-access "Request Access" is pending. AFTER APPROVAL, switch this to
@@ -38,10 +42,9 @@ targets:
         CODE_SIGN_ENTITLEMENTS: ASLVisionPro/visionOS/Support/ASLVisionPro-NoCamera.entitlements
         SWIFT_VERSION: "5.10"
         GENERATE_INFOPLIST_FILE: NO
-        # Your Apple Developer Team ID. Override without editing this file:
-        #   export DEVELOPMENT_TEAM=XXXXXXXXXX && xcodegen generate
-        # Find yours: security find-identity -v -p codesigning
-        DEVELOPMENT_TEAM: ${DEVELOPMENT_TEAM}
+        # No team is set on purpose, so this builds for anyone with no configuration.
+        # Simulator builds need none. For a physical device, pick your own team in Xcode:
+        # target > Signing & Capabilities > Team. A free Apple ID works.
         CODE_SIGN_STYLE: Automatic
 
   # ---- Unit tests (shared pipeline logic) -----------------------------------
@@ -60,7 +63,7 @@ targets:
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro.Tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ASLVisionPro.Tests
         SWIFT_VERSION: "5.10"
         GENERATE_INFOPLIST_FILE: YES
 
@@ -80,13 +83,12 @@ targets:
       - path: ASLVisionPro/iOS
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.mattharrington.ASLVisionPro.iOS
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.ASLVisionPro.iOS
         INFOPLIST_FILE: ASLVisionPro/iOS/Support/Info.plist
         SWIFT_VERSION: "5.10"
         GENERATE_INFOPLIST_FILE: NO
         TARGETED_DEVICE_FAMILY: "1,2"   # iPhone + iPad
-        # Your Apple Developer Team ID. Override without editing this file:
-        #   export DEVELOPMENT_TEAM=XXXXXXXXXX && xcodegen generate
-        # Find yours: security find-identity -v -p codesigning
-        DEVELOPMENT_TEAM: ${DEVELOPMENT_TEAM}
+        # No team is set on purpose, so this builds for anyone with no configuration.
+        # Simulator builds need none. For a physical device, pick your own team in Xcode:
+        # target > Signing & Capabilities > Team. A free Apple ID works.
         CODE_SIGN_STYLE: Automatic
