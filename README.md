@@ -55,13 +55,17 @@ differ.
 Requires Xcode 26+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```bash
-export DEVELOPMENT_TEAM=XXXXXXXXXX   # your Apple Team ID; omit for simulator-only
 xcodegen generate
 open ASLVisionPro.xcodeproj
 ```
 
-**Setting up from scratch?** [SETUP.md](SETUP.md) walks through it step by step, including
-signing to a physical iPhone and the failures worth knowing about in advance.
+Builds with no signing setup — the project ships with no development team and neutral
+`com.example` bundle identifiers. For a physical device, pick your own team in Xcode and change
+the bundle prefix in `project.yml`; a **free Apple ID works**.
+
+**New to Xcode?** [QUICKSTART.md](QUICKSTART.md) is a plain-language walkthrough — install
+Xcode, open the project, run it on your own iPhone. No terminal needed.
+**Developers:** [SETUP.md](SETUP.md) covers the same ground with more detail.
 
 Schemes: **ASLVisionPro** (visionOS) · **ASLVisionPro-iOS** · **ASLVisionProTests** (85 tests).
 
@@ -108,7 +112,8 @@ Two structural decisions worth preserving:
 
 | Doc | What it covers |
 |---|---|
-| [SETUP.md](SETUP.md) | Step-by-step: clone → build → run on your own iPhone |
+| [QUICKSTART.md](QUICKSTART.md) | Non-technical: install Xcode → run on your iPhone |
+| [SETUP.md](SETUP.md) | Developer setup: clone → build → device → training |
 | [TRAINING_GUIDE.md](TRAINING_GUIDE.md) | How the model was trained, where data lives, how to improve it |
 | [ML_PLAYBOOK.md](ML_PLAYBOOK.md) | Reusable procedure for any on-device model + local LLM |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System design and the capability ladder |

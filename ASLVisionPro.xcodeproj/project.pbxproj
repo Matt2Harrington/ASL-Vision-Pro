@@ -1,0 +1,864 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01FCA8A70EE128F3F3058240 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B64619D64B28CD94BA0FE /* DesignSystem.swift */; };
+		0230427B7E12C3708C27E0C9 /* TutorSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F71021605D77EAAAECCCCD /* TutorSession.swift */; };
+		0500F3C2380EBBB915892314 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
+		05BA1886BB231C2F1E743ACC /* FeatureEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA53E8FB8877B8C74E3B2D /* FeatureEncoderTests.swift */; };
+		07E2EAF2F4670E7DA290A8B4 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
+		0B0E0D48459B3863AE39ED9C /* SignVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E80105E4D107589DEA4BC6 /* SignVerifier.swift */; };
+		0E48D939230C7C7D2535D4C3 /* LandmarkOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2718AE2847C3123964181F9 /* LandmarkOverlayView.swift */; };
+		0E7061B2675C22633887B64B /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B64619D64B28CD94BA0FE /* DesignSystem.swift */; };
+		11DAD023034AEF03EDFE6508 /* CTCDecoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3DE7747EFF38B5361BCC92 /* CTCDecoderTests.swift */; };
+		13E058617342553CEE6F0DC9 /* ListenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4675CDC54CBCF64C4DA97552 /* ListenView.swift */; };
+		1432D15BFBC34E6B42E44CD2 /* signs.json in Resources */ = {isa = PBXBuildFile; fileRef = 9BE050A3715AC5F3A13DFD8D /* signs.json */; };
+		1449EC80BC9114ABD127A0F1 /* ContentView_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C106125FA4F95C1951CEFF14 /* ContentView_iOS.swift */; };
+		14C1FB4F112B8D0855A4197C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C369471C27E5AA01638AD44 /* ContentView.swift */; };
+		14C9B80146564B780B9942AC /* ASLVisionProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6753C341342691226C81BB0F /* ASLVisionProApp.swift */; };
+		15E1FEE879C9747C922F96A5 /* SpeechListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EF1286005321F8FAA219B1 /* SpeechListener.swift */; };
+		16F82A599E7660909417ED70 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5385E2C91127F88DA57FCD79 /* CameraPreview.swift */; };
+		1B1C2494B87DC7BEC2765BE5 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B64619D64B28CD94BA0FE /* DesignSystem.swift */; };
+		1D5F12A33B136EE461B79025 /* labels.json in Resources */ = {isa = PBXBuildFile; fileRef = 2B500AC7174D6B852085EF05 /* labels.json */; };
+		1F86585DB6B74998732AFA66 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A859F475AB35B16052A /* README.md */; };
+		2524EE19FB4B77905841864C /* ModeSelectionView_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F41BA497F58308493B02227 /* ModeSelectionView_iOS.swift */; };
+		25628095F17AEE017992EC11 /* DataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80DF897D35883B59A952C3B /* DataCollector.swift */; };
+		25C45A79DBF0D34BD3D024D6 /* ListenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4675CDC54CBCF64C4DA97552 /* ListenView.swift */; };
+		2869FDE361AC7F234CD25E37 /* GlossTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0350344D9CEB84BDB3C20808 /* GlossTranslator.swift */; };
+		2B09284D741FDF0A7C143EC5 /* SignSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E55BABCF765022D71DE165 /* SignSegmenter.swift */; };
+		2B8F34D041256D0C2BA1C8C1 /* SignCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A09A0A4FCB44B2103A185C /* SignCatalog.swift */; };
+		329A9347A5AB348EF2F8FA97 /* SignSegmenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD7AA34EEB9FA5846EAADC /* SignSegmenterTests.swift */; };
+		34EED5BD97671677212CED5F /* SignModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */; };
+		355D7ED918713C80ED49482B /* labels.json in Resources */ = {isa = PBXBuildFile; fileRef = 2B500AC7174D6B852085EF05 /* labels.json */; };
+		35D2DD7050573F83A72C225E /* SignCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A09A0A4FCB44B2103A185C /* SignCatalog.swift */; };
+		3794ED1F41FAFB0E57CCB1DB /* SignVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E80105E4D107589DEA4BC6 /* SignVerifier.swift */; };
+		3C5818C909270426D3D32FE0 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9017CB0A2A97D820AF1AE41C /* CaptionView.swift */; };
+		3E30028A367AB94D2AFCAACA /* GlossTranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7085980D0B9E5DBA7F98B0 /* GlossTranslatorTests.swift */; };
+		4025D6871C806E80DF276B4D /* iPhoneCameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2283F2E96C685D8D678A23B3 /* iPhoneCameraSource.swift */; };
+		45DAD4BBB4DD5292591447ED /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */; };
+		47DAF8BC65299F3AFBB9574F /* LandmarkExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5588E49A0A86AC9A4BFE53FF /* LandmarkExtractor.swift */; };
+		4806237C6DD66CCA9258BB78 /* TranslationCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */; };
+		4872BE85B01C0ADB420AF642 /* GlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7225A8465E5135346796C62E /* GlossInterpreter.swift */; };
+		4BE3E9066AF76D23B4D7A3AD /* GlossTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0350344D9CEB84BDB3C20808 /* GlossTranslator.swift */; };
+		507E859F5028BDB3C3A6959F /* FoundationModelGlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */; };
+		54D985D7BC4A5AEA826DBCF3 /* DataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80DF897D35883B59A952C3B /* DataCollector.swift */; };
+		561921220E7E17B7250767D3 /* TranslationCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */; };
+		566BC3A46EC9BE1300FD4E9A /* GlossTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0350344D9CEB84BDB3C20808 /* GlossTranslator.swift */; };
+		58C2BAAACAB8C2281E317194 /* FoundationModelGlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */; };
+		596BCD94112AF9280C3F5DD6 /* SpeechListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EF1286005321F8FAA219B1 /* SpeechListener.swift */; };
+		5ACC858C667797E1D1B0C256 /* TranslationCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */; };
+		5D19B7603CE1A23E7CCCE731 /* DataCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */; };
+		653BDCE2CBC12164BBF14B78 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9017CB0A2A97D820AF1AE41C /* CaptionView.swift */; };
+		65EAB759ED08EFE89047E162 /* GlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7225A8465E5135346796C62E /* GlossInterpreter.swift */; };
+		65F14C229CD191B9EA8A2AB6 /* RecognizerFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D0928C0EA0529275117576 /* RecognizerFactoryTests.swift */; };
+		68F6B79FA77DFD62C40D283A /* SignAttemptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA01CDDECADBF9DDED5E36A8 /* SignAttemptTests.swift */; };
+		6A41931687D24BF61916AFBB /* SignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */; };
+		6EFDF125784237141950B513 /* DataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80DF897D35883B59A952C3B /* DataCollector.swift */; };
+		71ECB1D966B9E0967E4DEF9A /* LandmarkOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2718AE2847C3123964181F9 /* LandmarkOverlayView.swift */; };
+		762D2AFD8AF7D50F724040C8 /* labels.json in Resources */ = {isa = PBXBuildFile; fileRef = 2B500AC7174D6B852085EF05 /* labels.json */; };
+		76E78309D533590D402372CA /* VisionProCameraSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AC65C0F6BF8E11DB4F3C05 /* VisionProCameraSource.swift */; };
+		783D8B1B1E9558532B4C7AC9 /* GlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7225A8465E5135346796C62E /* GlossInterpreter.swift */; };
+		78AE42B4B9BD807DAC2C4AAF /* SignVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E80105E4D107589DEA4BC6 /* SignVerifier.swift */; };
+		796E07E99C352966807CF4D4 /* SignFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F586D13CB5157D8952B13 /* SignFrame.swift */; };
+		7F53D94A70CE70C452A1A589 /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
+		81B89D4883876A242F82016D /* TutorSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */; };
+		82FA4ABED57C4ADD1E6897D5 /* FoundationModelSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BF9B6A5B015CAB9C6C9D42 /* FoundationModelSmokeTests.swift */; };
+		83BC3DDBDD2FF32FEFBD7866 /* ContinuousSignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */; };
+		8536359884BE80EE279E98E7 /* SignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */; };
+		87CEDE89723825F5F628E911 /* LandmarkExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5588E49A0A86AC9A4BFE53FF /* LandmarkExtractor.swift */; };
+		89B86B2DD24B9EEAF1C88161 /* SignCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03A09A0A4FCB44B2103A185C /* SignCatalog.swift */; };
+		8AAFB8D3C2106193F6A10167 /* ContinuousSignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */; };
+		8B552A8069FAE11F3FE40D43 /* SignCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04DC49794AE7E4247AB9D30 /* SignCatalogTests.swift */; };
+		8DFBC08EF1B865356642A7C9 /* LandmarkOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2718AE2847C3123964181F9 /* LandmarkOverlayView.swift */; };
+		90749BB480FFB6575478B436 /* signs.json in Resources */ = {isa = PBXBuildFile; fileRef = 9BE050A3715AC5F3A13DFD8D /* signs.json */; };
+		92D447D2A7F3FC67A2FEA5E6 /* TutorSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F71021605D77EAAAECCCCD /* TutorSession.swift */; };
+		933E4AD1857D3DB2F392F95D /* FrameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC17BBAA6D4D6D54282D07F /* FrameSource.swift */; };
+		965DD04AE39F15A1EC282EBB /* TutorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C095200FE6E6F20CF1D563D /* TutorView.swift */; };
+		96E58FFEE811311310E71076 /* ASLVisionProApp_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC690E707DF68FE836A26E7B /* ASLVisionProApp_iOS.swift */; };
+		9BB95B548470B6BCB29DF6FB /* DataCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */; };
+		9CE1D09F4AB2B5241A4A83EC /* FrameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC17BBAA6D4D6D54282D07F /* FrameSource.swift */; };
+		9E64D8A64AF1864D4918B81E /* SignFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F586D13CB5157D8952B13 /* SignFrame.swift */; };
+		A5BF1A316CD610EB3701F735 /* LandmarkExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5588E49A0A86AC9A4BFE53FF /* LandmarkExtractor.swift */; };
+		A62DB2623BEFC9EF78ABA209 /* TutorSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F71021605D77EAAAECCCCD /* TutorSession.swift */; };
+		A764A5EC300225722A567A9B /* ModeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03863C4C5BB8EABB8A90E571 /* ModeSelectionView.swift */; };
+		A91B0B9C51577AE378442151 /* signs.json in Resources */ = {isa = PBXBuildFile; fileRef = 9BE050A3715AC5F3A13DFD8D /* signs.json */; };
+		AA46693FE7AFC2DDE179577D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A859F475AB35B16052A /* README.md */; };
+		AC38BD1C74F89E9774FF9E17 /* HandTrackingSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1121B7E471883C09000836 /* HandTrackingSource.swift */; };
+		AE4A750D76804D77ACE0268A /* SignSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E55BABCF765022D71DE165 /* SignSegmenter.swift */; };
+		AF262ADEC831A8E596D83EA3 /* SpeechListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EF1286005321F8FAA219B1 /* SpeechListener.swift */; };
+		AFC65EF652963CD6244AF70D /* LandmarkOrderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABEDF1C8BBCF491774174CA2 /* LandmarkOrderTests.swift */; };
+		AFF6F78B989C204702412600 /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */; };
+		B234018FE2897115A24AAC66 /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
+		B5771728E7FE19D9E1D1EF4F /* GlossInterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE85C6697E8DF35C4608DA9 /* GlossInterpreterTests.swift */; };
+		B599C2EF8CB3A51636B36557 /* ContinuousSignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */; };
+		C47C19A745595E02E0EEFD18 /* SignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */; };
+		CA7CF3B707902B9904B0D78B /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
+		CABD4217DA795BE41237CC40 /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */; };
+		D0DB93DED968EA50D9744F59 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
+		D0F153583EAE90E06197473A /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
+		D52B4081AD45C362EFCEF070 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9017CB0A2A97D820AF1AE41C /* CaptionView.swift */; };
+		D8C68985E568614514E07679 /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
+		D9325DD3C9D515EAE15A6186 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A859F475AB35B16052A /* README.md */; };
+		DD6A8E41C65D14A83F728436 /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
+		DE70B4F7117F25AEA0CB0CCF /* SignModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */; };
+		E0ACC3E27B832731721A567F /* SignModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */; };
+		E6D5AADC2A2520A850941AA1 /* DataCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */; };
+		E7E40F01183C640F3257065B /* ListenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4675CDC54CBCF64C4DA97552 /* ListenView.swift */; };
+		EFF43848EF10E303BB04522B /* SignSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E55BABCF765022D71DE165 /* SignSegmenter.swift */; };
+		F1FAD25BE940D4B5FDFFE366 /* FrameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC17BBAA6D4D6D54282D07F /* FrameSource.swift */; };
+		F24B6B0E03B188CDC06FFFE2 /* SignFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F586D13CB5157D8952B13 /* SignFrame.swift */; };
+		F4AA9958638BA315AC3DC34E /* CaptionAssemblerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2721EB15B65F7A51BD553FE8 /* CaptionAssemblerTests.swift */; };
+		FA682747C1956C2F3A0FAAF2 /* FoundationModelGlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */; };
+		FC350379D351B85DF3BE3890 /* DataCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0350344D9CEB84BDB3C20808 /* GlossTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossTranslator.swift; sourceTree = "<group>"; };
+		03863C4C5BB8EABB8A90E571 /* ModeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectionView.swift; sourceTree = "<group>"; };
+		03A09A0A4FCB44B2103A185C /* SignCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignCatalog.swift; sourceTree = "<group>"; };
+		07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryView.swift; sourceTree = "<group>"; };
+		14E55BABCF765022D71DE165 /* SignSegmenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSegmenter.swift; sourceTree = "<group>"; };
+		16F71021605D77EAAAECCCCD /* TutorSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorSession.swift; sourceTree = "<group>"; };
+		20E80105E4D107589DEA4BC6 /* SignVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignVerifier.swift; sourceTree = "<group>"; };
+		2283F2E96C685D8D678A23B3 /* iPhoneCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneCameraSource.swift; sourceTree = "<group>"; };
+		22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectorTests.swift; sourceTree = "<group>"; };
+		2721EB15B65F7A51BD553FE8 /* CaptionAssemblerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionAssemblerTests.swift; sourceTree = "<group>"; };
+		2A618C1239903E5699EDDDA6 /* ASLVisionProTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ASLVisionProTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B500AC7174D6B852085EF05 /* labels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = labels.json; sourceTree = "<group>"; };
+		2C369471C27E5AA01638AD44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2C4F586D13CB5157D8952B13 /* SignFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignFrame.swift; sourceTree = "<group>"; };
+		2C7085980D0B9E5DBA7F98B0 /* GlossTranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossTranslatorTests.swift; sourceTree = "<group>"; };
+		3BE32EBAB3FAEE5B1F766AE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3F41BA497F58308493B02227 /* ModeSelectionView_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectionView_iOS.swift; sourceTree = "<group>"; };
+		4675CDC54CBCF64C4DA97552 /* ListenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenView.swift; sourceTree = "<group>"; };
+		492A3A859F475AB35B16052A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		5385E2C91127F88DA57FCD79 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+		5588E49A0A86AC9A4BFE53FF /* LandmarkExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkExtractor.swift; sourceTree = "<group>"; };
+		60AC65C0F6BF8E11DB4F3C05 /* VisionProCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionProCameraSource.swift; sourceTree = "<group>"; };
+		6753C341342691226C81BB0F /* ASLVisionProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASLVisionProApp.swift; sourceTree = "<group>"; };
+		6C095200FE6E6F20CF1D563D /* TutorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorView.swift; sourceTree = "<group>"; };
+		7225A8465E5135346796C62E /* GlossInterpreter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossInterpreter.swift; sourceTree = "<group>"; };
+		73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectorView.swift; sourceTree = "<group>"; };
+		86BA53E8FB8877B8C74E3B2D /* FeatureEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEncoderTests.swift; sourceTree = "<group>"; };
+		89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelGlossInterpreter.swift; sourceTree = "<group>"; };
+		8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEncoder.swift; sourceTree = "<group>"; };
+		9017CB0A2A97D820AF1AE41C /* CaptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptionView.swift; sourceTree = "<group>"; };
+		92EAFDA0847FD35581956C90 /* ASLVisionPro-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "ASLVisionPro-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorSessionTests.swift; sourceTree = "<group>"; };
+		9BE050A3715AC5F3A13DFD8D /* signs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = signs.json; sourceTree = "<group>"; };
+		9BE85C6697E8DF35C4608DA9 /* GlossInterpreterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossInterpreterTests.swift; sourceTree = "<group>"; };
+		9DC17BBAA6D4D6D54282D07F /* FrameSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSource.swift; sourceTree = "<group>"; };
+		A22B64619D64B28CD94BA0FE /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		A3EF1286005321F8FAA219B1 /* SpeechListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechListener.swift; sourceTree = "<group>"; };
+		A6AC3FF46D9B5DDC5DA7B013 /* ASLVisionPro.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ASLVisionPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABEDF1C8BBCF491774174CA2 /* LandmarkOrderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkOrderTests.swift; sourceTree = "<group>"; };
+		AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */ = {isa = PBXFileReference; path = SignModel.mlpackage; sourceTree = "<group>"; };
+		AFFB0AB00AA58121E8F5A8A7 /* ASLVisionPro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ASLVisionPro.entitlements; sourceTree = "<group>"; };
+		B3DD7AA34EEB9FA5846EAADC /* SignSegmenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSegmenterTests.swift; sourceTree = "<group>"; };
+		B5EDE240ED286800F65371DD /* ASLVisionPro-NoCamera.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ASLVisionPro-NoCamera.entitlements"; sourceTree = "<group>"; };
+		BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationCheckView.swift; sourceTree = "<group>"; };
+		C106125FA4F95C1951CEFF14 /* ContentView_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView_iOS.swift; sourceTree = "<group>"; };
+		C80DF897D35883B59A952C3B /* DataCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollector.swift; sourceTree = "<group>"; };
+		D4D0928C0EA0529275117576 /* RecognizerFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerFactoryTests.swift; sourceTree = "<group>"; };
+		DB3DE7747EFF38B5361BCC92 /* CTCDecoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTCDecoderTests.swift; sourceTree = "<group>"; };
+		DC690E707DF68FE836A26E7B /* ASLVisionProApp_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASLVisionProApp_iOS.swift; sourceTree = "<group>"; };
+		DED55E262AE4C857D8503503 /* RecognizerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerFactory.swift; sourceTree = "<group>"; };
+		DF1121B7E471883C09000836 /* HandTrackingSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandTrackingSource.swift; sourceTree = "<group>"; };
+		E04DC49794AE7E4247AB9D30 /* SignCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignCatalogTests.swift; sourceTree = "<group>"; };
+		E5BF9B6A5B015CAB9C6C9D42 /* FoundationModelSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelSmokeTests.swift; sourceTree = "<group>"; };
+		E75B854BAE451CAC81271AAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EA01CDDECADBF9DDED5E36A8 /* SignAttemptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignAttemptTests.swift; sourceTree = "<group>"; };
+		EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignRecognizer.swift; sourceTree = "<group>"; };
+		F2718AE2847C3123964181F9 /* LandmarkOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkOverlayView.swift; sourceTree = "<group>"; };
+		FC54458857BF2C6378239B1C /* TranslationPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationPipeline.swift; sourceTree = "<group>"; };
+		FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuousSignRecognizer.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1E3D6F00C41BFCF7898F0335 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				4C3A87FD527FBACC7679E747 /* Pipeline */,
+				26E29FF25E653A489741A355 /* UI */,
+			);
+			name = Shared;
+			path = ASLVisionPro/Shared;
+			sourceTree = "<group>";
+		};
+		26E29FF25E653A489741A355 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				9017CB0A2A97D820AF1AE41C /* CaptionView.swift */,
+				73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */,
+				A22B64619D64B28CD94BA0FE /* DesignSystem.swift */,
+				07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */,
+				F2718AE2847C3123964181F9 /* LandmarkOverlayView.swift */,
+				4675CDC54CBCF64C4DA97552 /* ListenView.swift */,
+				BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		341EEB520F636CFDACBA86FD /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				DC690E707DF68FE836A26E7B /* ASLVisionProApp_iOS.swift */,
+				5385E2C91127F88DA57FCD79 /* CameraPreview.swift */,
+				C106125FA4F95C1951CEFF14 /* ContentView_iOS.swift */,
+				2283F2E96C685D8D678A23B3 /* iPhoneCameraSource.swift */,
+				3F41BA497F58308493B02227 /* ModeSelectionView_iOS.swift */,
+				8F82A00E4417D2B584CCAECA /* Support */,
+			);
+			name = iOS;
+			path = ASLVisionPro/iOS;
+			sourceTree = "<group>";
+		};
+		4C3A87FD527FBACC7679E747 /* Pipeline */ = {
+			isa = PBXGroup;
+			children = (
+				FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */,
+				C80DF897D35883B59A952C3B /* DataCollector.swift */,
+				8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */,
+				89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */,
+				9DC17BBAA6D4D6D54282D07F /* FrameSource.swift */,
+				7225A8465E5135346796C62E /* GlossInterpreter.swift */,
+				0350344D9CEB84BDB3C20808 /* GlossTranslator.swift */,
+				5588E49A0A86AC9A4BFE53FF /* LandmarkExtractor.swift */,
+				DED55E262AE4C857D8503503 /* RecognizerFactory.swift */,
+				03A09A0A4FCB44B2103A185C /* SignCatalog.swift */,
+				2C4F586D13CB5157D8952B13 /* SignFrame.swift */,
+				EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */,
+				14E55BABCF765022D71DE165 /* SignSegmenter.swift */,
+				20E80105E4D107589DEA4BC6 /* SignVerifier.swift */,
+				A3EF1286005321F8FAA219B1 /* SpeechListener.swift */,
+				FC54458857BF2C6378239B1C /* TranslationPipeline.swift */,
+				16F71021605D77EAAAECCCCD /* TutorSession.swift */,
+			);
+			path = Pipeline;
+			sourceTree = "<group>";
+		};
+		603597C07ABE3324121C034E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2B500AC7174D6B852085EF05 /* labels.json */,
+				9BE050A3715AC5F3A13DFD8D /* signs.json */,
+			);
+			name = Resources;
+			path = ASLVisionPro/Shared/Resources;
+			sourceTree = "<group>";
+		};
+		7B6399F1E9282D5B2188791C = {
+			isa = PBXGroup;
+			children = (
+				341EEB520F636CFDACBA86FD /* iOS */,
+				8B615A312DFF5EA6CB9A8AEF /* Models */,
+				603597C07ABE3324121C034E /* Resources */,
+				1E3D6F00C41BFCF7898F0335 /* Shared */,
+				D7A8F5485C33539A8DB8524F /* Tests */,
+				CB374C3C160A8030CAEA4EE8 /* visionOS */,
+				993FB79FDE68452E0C9E71F8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8B615A312DFF5EA6CB9A8AEF /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				492A3A859F475AB35B16052A /* README.md */,
+				AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */,
+			);
+			name = Models;
+			path = ASLVisionPro/Shared/Models;
+			sourceTree = "<group>";
+		};
+		8F82A00E4417D2B584CCAECA /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				E75B854BAE451CAC81271AAE /* Info.plist */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		993FB79FDE68452E0C9E71F8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				92EAFDA0847FD35581956C90 /* ASLVisionPro-iOS.app */,
+				A6AC3FF46D9B5DDC5DA7B013 /* ASLVisionPro.app */,
+				2A618C1239903E5699EDDDA6 /* ASLVisionProTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CB374C3C160A8030CAEA4EE8 /* visionOS */ = {
+			isa = PBXGroup;
+			children = (
+				6753C341342691226C81BB0F /* ASLVisionProApp.swift */,
+				2C369471C27E5AA01638AD44 /* ContentView.swift */,
+				DF1121B7E471883C09000836 /* HandTrackingSource.swift */,
+				03863C4C5BB8EABB8A90E571 /* ModeSelectionView.swift */,
+				6C095200FE6E6F20CF1D563D /* TutorView.swift */,
+				60AC65C0F6BF8E11DB4F3C05 /* VisionProCameraSource.swift */,
+				D11B56E4FD6AA4806CED7363 /* Support */,
+			);
+			name = visionOS;
+			path = ASLVisionPro/visionOS;
+			sourceTree = "<group>";
+		};
+		D11B56E4FD6AA4806CED7363 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				B5EDE240ED286800F65371DD /* ASLVisionPro-NoCamera.entitlements */,
+				AFFB0AB00AA58121E8F5A8A7 /* ASLVisionPro.entitlements */,
+				3BE32EBAB3FAEE5B1F766AE6 /* Info.plist */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		D7A8F5485C33539A8DB8524F /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2721EB15B65F7A51BD553FE8 /* CaptionAssemblerTests.swift */,
+				DB3DE7747EFF38B5361BCC92 /* CTCDecoderTests.swift */,
+				22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */,
+				86BA53E8FB8877B8C74E3B2D /* FeatureEncoderTests.swift */,
+				E5BF9B6A5B015CAB9C6C9D42 /* FoundationModelSmokeTests.swift */,
+				9BE85C6697E8DF35C4608DA9 /* GlossInterpreterTests.swift */,
+				2C7085980D0B9E5DBA7F98B0 /* GlossTranslatorTests.swift */,
+				ABEDF1C8BBCF491774174CA2 /* LandmarkOrderTests.swift */,
+				D4D0928C0EA0529275117576 /* RecognizerFactoryTests.swift */,
+				EA01CDDECADBF9DDED5E36A8 /* SignAttemptTests.swift */,
+				E04DC49794AE7E4247AB9D30 /* SignCatalogTests.swift */,
+				B3DD7AA34EEB9FA5846EAADC /* SignSegmenterTests.swift */,
+				9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		52555D8B5BFD5F2D7A851095 /* ASLVisionProTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EC09C9D1A31874D20F5C293 /* Build configuration list for PBXNativeTarget "ASLVisionProTests" */;
+			buildPhases = (
+				5EB4271AA54A3C3EF9B99DFD /* Sources */,
+				6C7D959C9346A45D2F8A1026 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ASLVisionProTests;
+			packageProductDependencies = (
+			);
+			productName = ASLVisionProTests;
+			productReference = 2A618C1239903E5699EDDDA6 /* ASLVisionProTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		867481DDF58B71EB517E95E3 /* ASLVisionPro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EFB96F2EAB3BC4509C3B425 /* Build configuration list for PBXNativeTarget "ASLVisionPro" */;
+			buildPhases = (
+				A7124395C3F8EDF7D1AC4899 /* Sources */,
+				EA59E97B94285D067F0AC0A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ASLVisionPro;
+			packageProductDependencies = (
+			);
+			productName = ASLVisionPro;
+			productReference = A6AC3FF46D9B5DDC5DA7B013 /* ASLVisionPro.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D6D7AAB0B6DE348D454B51D /* ASLVisionPro-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0C824ADA8393E6ED2FFB0D49 /* Build configuration list for PBXNativeTarget "ASLVisionPro-iOS" */;
+			buildPhases = (
+				DA5805F2E5B80BBF31CBBFEF /* Sources */,
+				A8201DBB5763715780110E98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ASLVisionPro-iOS";
+			packageProductDependencies = (
+			);
+			productName = "ASLVisionPro-iOS";
+			productReference = 92EAFDA0847FD35581956C90 /* ASLVisionPro-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CE63560F963882E15E8F62EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					867481DDF58B71EB517E95E3 = {
+						ProvisioningStyle = Automatic;
+					};
+					8D6D7AAB0B6DE348D454B51D = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 2F1F7A6AFEE83473981E3754 /* Build configuration list for PBXProject "ASLVisionPro" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 7B6399F1E9282D5B2188791C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				867481DDF58B71EB517E95E3 /* ASLVisionPro */,
+				8D6D7AAB0B6DE348D454B51D /* ASLVisionPro-iOS */,
+				52555D8B5BFD5F2D7A851095 /* ASLVisionProTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6C7D959C9346A45D2F8A1026 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9325DD3C9D515EAE15A6186 /* README.md in Resources */,
+				1D5F12A33B136EE461B79025 /* labels.json in Resources */,
+				90749BB480FFB6575478B436 /* signs.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A8201DBB5763715780110E98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA46693FE7AFC2DDE179577D /* README.md in Resources */,
+				762D2AFD8AF7D50F724040C8 /* labels.json in Resources */,
+				1432D15BFBC34E6B42E44CD2 /* signs.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EA59E97B94285D067F0AC0A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F86585DB6B74998732AFA66 /* README.md in Resources */,
+				355D7ED918713C80ED49482B /* labels.json in Resources */,
+				A91B0B9C51577AE378442151 /* signs.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5EB4271AA54A3C3EF9B99DFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11DAD023034AEF03EDFE6508 /* CTCDecoderTests.swift in Sources */,
+				F4AA9958638BA315AC3DC34E /* CaptionAssemblerTests.swift in Sources */,
+				653BDCE2CBC12164BBF14B78 /* CaptionView.swift in Sources */,
+				B599C2EF8CB3A51636B36557 /* ContinuousSignRecognizer.swift in Sources */,
+				6EFDF125784237141950B513 /* DataCollector.swift in Sources */,
+				E6D5AADC2A2520A850941AA1 /* DataCollectorTests.swift in Sources */,
+				9BB95B548470B6BCB29DF6FB /* DataCollectorView.swift in Sources */,
+				1B1C2494B87DC7BEC2765BE5 /* DesignSystem.swift in Sources */,
+				AFF6F78B989C204702412600 /* DictionaryView.swift in Sources */,
+				07E2EAF2F4670E7DA290A8B4 /* FeatureEncoder.swift in Sources */,
+				05BA1886BB231C2F1E743ACC /* FeatureEncoderTests.swift in Sources */,
+				FA682747C1956C2F3A0FAAF2 /* FoundationModelGlossInterpreter.swift in Sources */,
+				82FA4ABED57C4ADD1E6897D5 /* FoundationModelSmokeTests.swift in Sources */,
+				9CE1D09F4AB2B5241A4A83EC /* FrameSource.swift in Sources */,
+				65EAB759ED08EFE89047E162 /* GlossInterpreter.swift in Sources */,
+				B5771728E7FE19D9E1D1EF4F /* GlossInterpreterTests.swift in Sources */,
+				2869FDE361AC7F234CD25E37 /* GlossTranslator.swift in Sources */,
+				3E30028A367AB94D2AFCAACA /* GlossTranslatorTests.swift in Sources */,
+				47DAF8BC65299F3AFBB9574F /* LandmarkExtractor.swift in Sources */,
+				AFC65EF652963CD6244AF70D /* LandmarkOrderTests.swift in Sources */,
+				71ECB1D966B9E0967E4DEF9A /* LandmarkOverlayView.swift in Sources */,
+				E7E40F01183C640F3257065B /* ListenView.swift in Sources */,
+				B234018FE2897115A24AAC66 /* RecognizerFactory.swift in Sources */,
+				65F14C229CD191B9EA8A2AB6 /* RecognizerFactoryTests.swift in Sources */,
+				68F6B79FA77DFD62C40D283A /* SignAttemptTests.swift in Sources */,
+				2B8F34D041256D0C2BA1C8C1 /* SignCatalog.swift in Sources */,
+				8B552A8069FAE11F3FE40D43 /* SignCatalogTests.swift in Sources */,
+				9E64D8A64AF1864D4918B81E /* SignFrame.swift in Sources */,
+				34EED5BD97671677212CED5F /* SignModel.mlpackage in Sources */,
+				6A41931687D24BF61916AFBB /* SignRecognizer.swift in Sources */,
+				AE4A750D76804D77ACE0268A /* SignSegmenter.swift in Sources */,
+				329A9347A5AB348EF2F8FA97 /* SignSegmenterTests.swift in Sources */,
+				78AE42B4B9BD807DAC2C4AAF /* SignVerifier.swift in Sources */,
+				596BCD94112AF9280C3F5DD6 /* SpeechListener.swift in Sources */,
+				5ACC858C667797E1D1B0C256 /* TranslationCheckView.swift in Sources */,
+				CA7CF3B707902B9904B0D78B /* TranslationPipeline.swift in Sources */,
+				A62DB2623BEFC9EF78ABA209 /* TutorSession.swift in Sources */,
+				81B89D4883876A242F82016D /* TutorSessionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7124395C3F8EDF7D1AC4899 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14C9B80146564B780B9942AC /* ASLVisionProApp.swift in Sources */,
+				D52B4081AD45C362EFCEF070 /* CaptionView.swift in Sources */,
+				14C1FB4F112B8D0855A4197C /* ContentView.swift in Sources */,
+				8AAFB8D3C2106193F6A10167 /* ContinuousSignRecognizer.swift in Sources */,
+				54D985D7BC4A5AEA826DBCF3 /* DataCollector.swift in Sources */,
+				5D19B7603CE1A23E7CCCE731 /* DataCollectorView.swift in Sources */,
+				0E7061B2675C22633887B64B /* DesignSystem.swift in Sources */,
+				45DAD4BBB4DD5292591447ED /* DictionaryView.swift in Sources */,
+				D0DB93DED968EA50D9744F59 /* FeatureEncoder.swift in Sources */,
+				507E859F5028BDB3C3A6959F /* FoundationModelGlossInterpreter.swift in Sources */,
+				F1FAD25BE940D4B5FDFFE366 /* FrameSource.swift in Sources */,
+				4872BE85B01C0ADB420AF642 /* GlossInterpreter.swift in Sources */,
+				566BC3A46EC9BE1300FD4E9A /* GlossTranslator.swift in Sources */,
+				AC38BD1C74F89E9774FF9E17 /* HandTrackingSource.swift in Sources */,
+				87CEDE89723825F5F628E911 /* LandmarkExtractor.swift in Sources */,
+				0E48D939230C7C7D2535D4C3 /* LandmarkOverlayView.swift in Sources */,
+				25C45A79DBF0D34BD3D024D6 /* ListenView.swift in Sources */,
+				A764A5EC300225722A567A9B /* ModeSelectionView.swift in Sources */,
+				D0F153583EAE90E06197473A /* RecognizerFactory.swift in Sources */,
+				35D2DD7050573F83A72C225E /* SignCatalog.swift in Sources */,
+				796E07E99C352966807CF4D4 /* SignFrame.swift in Sources */,
+				DE70B4F7117F25AEA0CB0CCF /* SignModel.mlpackage in Sources */,
+				8536359884BE80EE279E98E7 /* SignRecognizer.swift in Sources */,
+				EFF43848EF10E303BB04522B /* SignSegmenter.swift in Sources */,
+				0B0E0D48459B3863AE39ED9C /* SignVerifier.swift in Sources */,
+				15E1FEE879C9747C922F96A5 /* SpeechListener.swift in Sources */,
+				561921220E7E17B7250767D3 /* TranslationCheckView.swift in Sources */,
+				DD6A8E41C65D14A83F728436 /* TranslationPipeline.swift in Sources */,
+				0230427B7E12C3708C27E0C9 /* TutorSession.swift in Sources */,
+				965DD04AE39F15A1EC282EBB /* TutorView.swift in Sources */,
+				76E78309D533590D402372CA /* VisionProCameraSource.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DA5805F2E5B80BBF31CBBFEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96E58FFEE811311310E71076 /* ASLVisionProApp_iOS.swift in Sources */,
+				16F82A599E7660909417ED70 /* CameraPreview.swift in Sources */,
+				3C5818C909270426D3D32FE0 /* CaptionView.swift in Sources */,
+				1449EC80BC9114ABD127A0F1 /* ContentView_iOS.swift in Sources */,
+				83BC3DDBDD2FF32FEFBD7866 /* ContinuousSignRecognizer.swift in Sources */,
+				25628095F17AEE017992EC11 /* DataCollector.swift in Sources */,
+				FC350379D351B85DF3BE3890 /* DataCollectorView.swift in Sources */,
+				01FCA8A70EE128F3F3058240 /* DesignSystem.swift in Sources */,
+				CABD4217DA795BE41237CC40 /* DictionaryView.swift in Sources */,
+				0500F3C2380EBBB915892314 /* FeatureEncoder.swift in Sources */,
+				58C2BAAACAB8C2281E317194 /* FoundationModelGlossInterpreter.swift in Sources */,
+				933E4AD1857D3DB2F392F95D /* FrameSource.swift in Sources */,
+				783D8B1B1E9558532B4C7AC9 /* GlossInterpreter.swift in Sources */,
+				4BE3E9066AF76D23B4D7A3AD /* GlossTranslator.swift in Sources */,
+				A5BF1A316CD610EB3701F735 /* LandmarkExtractor.swift in Sources */,
+				8DFBC08EF1B865356642A7C9 /* LandmarkOverlayView.swift in Sources */,
+				13E058617342553CEE6F0DC9 /* ListenView.swift in Sources */,
+				2524EE19FB4B77905841864C /* ModeSelectionView_iOS.swift in Sources */,
+				7F53D94A70CE70C452A1A589 /* RecognizerFactory.swift in Sources */,
+				89B86B2DD24B9EEAF1C88161 /* SignCatalog.swift in Sources */,
+				F24B6B0E03B188CDC06FFFE2 /* SignFrame.swift in Sources */,
+				E0ACC3E27B832731721A567F /* SignModel.mlpackage in Sources */,
+				C47C19A745595E02E0EEFD18 /* SignRecognizer.swift in Sources */,
+				2B09284D741FDF0A7C143EC5 /* SignSegmenter.swift in Sources */,
+				3794ED1F41FAFB0E57CCB1DB /* SignVerifier.swift in Sources */,
+				AF262ADEC831A8E596D83EA3 /* SpeechListener.swift in Sources */,
+				4806237C6DD66CCA9258BB78 /* TranslationCheckView.swift in Sources */,
+				D8C68985E568614514E07679 /* TranslationPipeline.swift in Sources */,
+				92D447D2A7F3FC67A2FEA5E6 /* TutorSession.swift in Sources */,
+				4025D6871C806E80DF276B4D /* iPhoneCameraSource.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		08554FA23C7250AE07F443E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ASLVisionPro/iOS/Support/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro.iOS;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0B2E910BDD82FD4962F0DC59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ASLVisionPro/iOS/Support/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro.iOS;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2F2BBC1FA61B62350C6F201A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		3266D84113F6AD01BDCEF513 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro.Tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		69AA98204397C57D5F96EEE1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro.Tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		82A171830D0AFFB992E1D0EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ASLVisionPro/visionOS/Support/ASLVisionPro-NoCamera.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ASLVisionPro/visionOS/Support/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro;
+				SDKROOT = xros;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Debug;
+		};
+		E93F4919B33436BABF99D618 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		F34F8BF5057DF184289B01D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ASLVisionPro/visionOS/Support/ASLVisionPro-NoCamera.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ASLVisionPro/visionOS/Support/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.ASLVisionPro;
+				SDKROOT = xros;
+				SWIFT_VERSION = 5.10;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0C824ADA8393E6ED2FFB0D49 /* Build configuration list for PBXNativeTarget "ASLVisionPro-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08554FA23C7250AE07F443E6 /* Debug */,
+				0B2E910BDD82FD4962F0DC59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2EC09C9D1A31874D20F5C293 /* Build configuration list for PBXNativeTarget "ASLVisionProTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3266D84113F6AD01BDCEF513 /* Debug */,
+				69AA98204397C57D5F96EEE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2F1F7A6AFEE83473981E3754 /* Build configuration list for PBXProject "ASLVisionPro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F2BBC1FA61B62350C6F201A /* Debug */,
+				E93F4919B33436BABF99D618 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5EFB96F2EAB3BC4509C3B425 /* Build configuration list for PBXNativeTarget "ASLVisionPro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82A171830D0AFFB992E1D0EE /* Debug */,
+				F34F8BF5057DF184289B01D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CE63560F963882E15E8F62EA /* Project object */;
+}

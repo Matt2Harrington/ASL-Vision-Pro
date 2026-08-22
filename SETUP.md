@@ -2,9 +2,9 @@
 
 Getting this running on a fresh Mac, from clone to signing on your own iPhone.
 
-**Fastest useful result:** steps 1–5 (~10 minutes) build the app and run the test suite. Add
-step 6 to see it in the simulator. Step 7 puts it on a real phone, which is the only way to
-test the camera.
+**Fastest useful result:** steps 1–4 (~10 minutes) build the app and run the test suite, with
+no Apple account or signing setup at all. Step 5 shows it in the simulator. Step 6 puts it on a
+real phone — the only way to test the camera — and works with a free Apple ID.
 
 ---
 
@@ -14,7 +14,7 @@ test the camera.
 |---|---|
 | **macOS** | Sonoma or later |
 | **Xcode 26+** | from the App Store. The full app, not just Command Line Tools |
-| **Apple ID** | a free one is enough to run on your own device |
+| **Apple ID** | free tier is enough; only needed for step 6 |
 | **iPhone** | optional but recommended — the simulator has no camera |
 | **Apple Vision Pro** | optional; only needed for 3D hand tracking |
 
@@ -60,26 +60,15 @@ The Xcode project is **generated** from `project.yml` rather than committed — 
 brew install xcodegen
 ```
 
-## 4. Find your Team ID
-
-Needed only for running on a physical device; skip if you're staying in the simulator.
+## 4. Generate and build
 
 ```bash
-security find-identity -v -p codesigning
-```
-
-Look for `Apple Development: Your Name (XXXXXXXXXX)` — the 10 characters in parentheses are
-your Team ID.
-
-**No identity listed?** Open Xcode → Settings → Accounts → **+** → sign in with your Apple ID,
-then re-run the command.
-
-## 5. Generate and build
-
-```bash
-export DEVELOPMENT_TEAM=XXXXXXXXXX     # your ID from step 4; omit for simulator-only
 xcodegen generate
 ```
+
+No signing configuration is needed. The project ships with **no development team** and neutral
+`com.example` bundle identifiers, so it builds for anyone out of the box. Signing only matters
+in step 7, when you put it on a physical device.
 
 Run the tests — no device or model needed, and it proves the toolchain end to end:
 
@@ -96,7 +85,7 @@ Expect **85 tests, 0 failures**. If your Mac has a different simulator, list the
 > `xcodebuild test` can hang for several minutes *after* the results print. The tests are done;
 > it's a teardown quirk. Ctrl-C once you see the summary.
 
-## 6. Run in the simulator
+## 5. Run in the simulator
 
 ```bash
 open ASLVisionPro.xcodeproj
@@ -112,18 +101,30 @@ fail, because Apple Intelligence model assets are often absent there.
 
 For visionOS instead, choose the **ASLVisionPro** scheme and an Apple Vision Pro simulator.
 
-## 7. Run on your iPhone
+## 6. Run on your iPhone
 
-This is where the camera actually works.
+This is where the camera actually works. **A free Apple ID is enough** — no paid developer
+account required.
 
-1. Plug the iPhone in and unlock it. Trust the Mac if prompted.
-2. In Xcode select the **ASLVisionPro-iOS** scheme, then pick your iPhone as the destination.
-3. Open the target's **Signing & Capabilities** tab and confirm your team is selected. If the
-   bundle ID is taken, change it to something unique — e.g. `com.yourname.ASLVisionPro.iOS`.
-4. ⌘R.
-5. First launch will fail with **"Untrusted Developer."** On the phone:
+1. **Add your Apple ID to Xcode** if you haven't: Xcode → Settings → Accounts → **+** → Apple ID.
+2. **Change the bundle identifier to your own.** In `project.yml`, replace the two
+   `com.example.` prefixes with your own reverse-DNS (e.g. `com.yourname.`), then re-run
+   `xcodegen generate`.
+
+   This step is not optional for device builds. Free provisioning registers the identifier
+   against *your* team, so a shared prefix collides between people — if someone else has
+   already registered `com.example.ASLVisionPro.iOS`, yours is refused.
+3. Plug the iPhone in, unlock it, and trust the Mac if prompted.
+4. Select the **ASLVisionPro-iOS** scheme and pick your iPhone as the destination.
+5. Open the target's **Signing & Capabilities** tab and choose **your team** in the Team
+   dropdown. Xcode creates a free provisioning profile automatically.
+6. ⌘R.
+7. First launch fails with **"Untrusted Developer."** On the phone:
    **Settings → General → VPN & Device Management → your Apple ID → Trust**. Launch again.
-6. Allow camera and microphone access when asked.
+8. Allow camera and microphone access when asked.
+
+> Free provisioning profiles **expire after 7 days**. When the app stops launching, rebuild
+> from Xcode — nothing is wrong.
 
 ### What to try
 
@@ -138,7 +139,7 @@ This is where the camera actually works.
 Without a trained model the app is honest about it: a prominent banner appears, because stub
 feedback is otherwise indistinguishable from real recognition.
 
-## 8. (Optional) Train a model
+## 7. (Optional) Train a model
 
 Only if you want Practice and Interpret to actually recognize signing. Needs a free Kaggle
 account. Full detail in [TRAINING_GUIDE.md](TRAINING_GUIDE.md); the short version:
@@ -180,12 +181,14 @@ and the orange banner disappears — the app finds the model with no code change
 Step 1 wasn't done, or pointed at the wrong path. Check with `xcode-select -p`.
 
 **`Signing for "ASLVisionPro-iOS" requires a development team`**
-`DEVELOPMENT_TEAM` wasn't set before `xcodegen generate`, or select your team in Xcode's
-Signing & Capabilities tab instead.
+Expected until you pick a team — step 6.5. Simulator builds don't need one.
 
-**`Failed to register bundle identifier`**
-Someone else has claimed it. Change `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml` to your own
-reverse-DNS and regenerate.
+**`Failed to register bundle identifier`** or **`... is not available`**
+The `com.example.` prefix is still in place, or someone else registered it. Change it to your
+own reverse-DNS in `project.yml` and re-run `xcodegen generate` — step 6.2.
+
+**App stops launching after about a week**
+Free provisioning profiles expire after 7 days. Rebuild from Xcode.
 
 **"Untrusted Developer" on the phone**
 Expected on first install — step 7.5.

@@ -11,10 +11,12 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 
-# XcodeGen output — the project is GENERATED from project.yml.
-# Run `xcodegen generate` after cloning. Committing project.pbxproj invites
-# brutal merge conflicts; project.yml is the source of truth.
-ASLVisionPro.xcodeproj/
+# The generated Xcode project IS committed, so the repo can be opened and run with
+# only Xcode installed — no terminal, no Homebrew, no XcodeGen. project.yml remains
+# the source of truth: change structure there, run `xcodegen generate`, commit both.
+# Per-user Xcode state stays out.
+ASLVisionPro.xcodeproj/xcuserdata/
+ASLVisionPro.xcodeproj/project.xcworkspace/xcuserdata/
 
 # Claude Code local settings
 .claude/settings.local.json
