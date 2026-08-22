@@ -158,6 +158,21 @@ struct SimulatedBanner: View {
     }
 }
 
+extension View {
+    /// `scrollDismissesKeyboard` is iOS/macOS only — visionOS has no software keyboard to
+    /// dismiss this way, and referencing it there is a compile error rather than a no-op.
+    /// These views are shared by both targets, so the platform difference is absorbed here
+    /// instead of being repeated at each call site.
+    @ViewBuilder
+    func dismissesKeyboardOnScroll() -> some View {
+        #if os(visionOS)
+        self
+        #else
+        self.scrollDismissesKeyboard(.interactively)
+        #endif
+    }
+}
+
 /// Always-visible honesty label. Recognition can be wrong, and every screen that shows
 /// recognized output carries this rather than relying on the user to remember.
 struct ExperimentalNote: View {

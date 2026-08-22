@@ -44,7 +44,7 @@ struct DictionaryView: View {
                 }
                 .padding(28)
             }
-            .scrollDismissesKeyboard(.interactively)
+            .dismissesKeyboardOnScroll()
             .navigationTitle("Dictionary")
             .navigationDestination(item: $selected) { SignDetailView(entry: $0) }
         }

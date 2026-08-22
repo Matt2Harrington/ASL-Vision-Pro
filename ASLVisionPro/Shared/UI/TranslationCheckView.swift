@@ -43,7 +43,7 @@ struct TranslationCheckView: View {
         }
         // Swiping the list down dismisses the keyboard, and tapping outside the field does
         // too — without these the field traps the keyboard with no way to close it.
-        .scrollDismissesKeyboard(.interactively)
+        .dismissesKeyboardOnScroll()
         .onTapGesture { inputFocused = false }
         .navigationTitle("Translation Check")
     }
