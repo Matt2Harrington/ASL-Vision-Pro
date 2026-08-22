@@ -5,11 +5,11 @@ recognizes nothing, so a fresh clone would have little to test.
 
 | | |
 |---|---|
-| Classes | BAD · BOOK · BYE · DAD · HELLO · NO · PLEASE · WATER · YES · NONE |
-| Accuracy | 82.3% on **held-out signers** (chance = 10%) |
-| Trained on | 900 clips (100/sign), 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
+| Classes | BAD · BOOK · BYE · DAD · DRINK · FINISH · FOOD · HAPPY · HELLO · HOME · HOT · NO · PLEASE · WATER · YES · NONE |
+| Accuracy | 76.9% on **held-out signers** (chance ≈ 6%) |
+| Trained on | 1,468 clips (100/sign), 21 Deaf signers — Kaggle `asl-signs`, CC BY 4.0 |
 | Input | `landmarks` [1, 24, 198] |
-| Output | `probabilities` [1, 10] |
+| Output | `probabilities` [1, 16] |
 | Spec | `config/feature_spec.json` **v3** — hands-only, depth zeroed |
 
 ## It is paired with two other files
@@ -41,9 +41,15 @@ finds it by name with no code change.
 
 ## Honest scope
 
-Nine signs is a demo, not a product, and 82.3% is measured on the source corpus — real-world
+Fifteen signs is a demo, not a product, and 76.9% is measured on the source corpus — real-world
 accuracy on a phone in a room is a different and unverified number.
 
-Accuracy fell from 91.8% when the vocabulary was five signs. That is expected: more classes is
-a harder problem at the same amount of data per class. Adding clips per sign is the lever that
-buys it back, and the dataset holds roughly 380 per sign against the 100 used here.
+Accuracy has tracked vocabulary size at a fixed 100 clips per sign: 91.8% at five signs, 82.3%
+at nine, 76.9% at fifteen. That is the expected trade, not a regression — more classes is a
+harder problem on the same data per class. The lever that buys it back is clips per sign, and
+the dataset holds roughly 380 against the 100 used here.
+
+Kaggle rate limits per-file downloads to roughly 500–600 files per window, which is what has
+capped the vocabulary rather than any choice. `fetch_subset.py` is resumable, so repeated runs
+spaced apart accumulate; the alternative is one bulk download of the full ~100 GB corpus, which
+is a single request and therefore not subject to the same limit.
