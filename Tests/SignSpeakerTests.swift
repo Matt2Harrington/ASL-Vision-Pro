@@ -5,9 +5,14 @@ import XCTest
 @MainActor
 final class SignSpeakerTests: XCTestCase {
 
+    /// Each speaker gets its own settings store, so tests can't affect one another.
     private func makeSpeaker(enabled: Bool = true,
-                             mode: SignSpeaker.Mode = .word) -> SignSpeaker {
-        let s = SignSpeaker()
+                             mode: SignSpeaker.Mode = .word,
+                             sentences: Bool = true) -> SignSpeaker {
+        let defaults = UserDefaults(suiteName: "test.\(UUID().uuidString)")!
+        let settings = AppSettings(defaults: defaults)
+        settings.sentencesEnabled = sentences
+        let s = SignSpeaker(settings: settings)
         s.isEnabled = enabled
         s.mode = mode
         return s

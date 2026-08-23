@@ -27,6 +27,7 @@
 		1B1C2494B87DC7BEC2765BE5 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B64619D64B28CD94BA0FE /* DesignSystem.swift */; };
 		1D5F12A33B136EE461B79025 /* labels.json in Resources */ = {isa = PBXBuildFile; fileRef = 2B500AC7174D6B852085EF05 /* labels.json */; };
 		1F86585DB6B74998732AFA66 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A859F475AB35B16052A /* README.md */; };
+		21383D1A2D340953A938E344 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D83D7009E1138A23A4FE070 /* AppSettings.swift */; };
 		2524EE19FB4B77905841864C /* ModeSelectionView_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F41BA497F58308493B02227 /* ModeSelectionView_iOS.swift */; };
 		25628095F17AEE017992EC11 /* DataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80DF897D35883B59A952C3B /* DataCollector.swift */; };
 		25C45A79DBF0D34BD3D024D6 /* ListenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4675CDC54CBCF64C4DA97552 /* ListenView.swift */; };
@@ -67,6 +68,7 @@
 		783D8B1B1E9558532B4C7AC9 /* GlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7225A8465E5135346796C62E /* GlossInterpreter.swift */; };
 		78AE42B4B9BD807DAC2C4AAF /* SignVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E80105E4D107589DEA4BC6 /* SignVerifier.swift */; };
 		796E07E99C352966807CF4D4 /* SignFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F586D13CB5157D8952B13 /* SignFrame.swift */; };
+		7EDCB04687DB42F5473E9691 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D83D7009E1138A23A4FE070 /* AppSettings.swift */; };
 		7F53D94A70CE70C452A1A589 /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
 		81B89D4883876A242F82016D /* TutorSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */; };
 		81ECE8306979B0520E0AB1D7 /* SignCatalogTests.swift.tmp in Resources */ = {isa = PBXBuildFile; fileRef = 1B522FB6F72292FE469BCE2A /* SignCatalogTests.swift.tmp */; };
@@ -99,7 +101,9 @@
 		B234018FE2897115A24AAC66 /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
 		B5771728E7FE19D9E1D1EF4F /* GlossInterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE85C6697E8DF35C4608DA9 /* GlossInterpreterTests.swift */; };
 		B599C2EF8CB3A51636B36557 /* ContinuousSignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */; };
+		C0A33FB2A7618872BFB309EB /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC062257A81F9A4831E825F /* AppSettingsTests.swift */; };
 		C47C19A745595E02E0EEFD18 /* SignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */; };
+		C4C5A1215372C4A65FD66E26 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D83D7009E1138A23A4FE070 /* AppSettings.swift */; };
 		CA7CF3B707902B9904B0D78B /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
 		CABD4217DA795BE41237CC40 /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */; };
 		D0DB93DED968EA50D9744F59 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
@@ -149,6 +153,8 @@
 		60AC65C0F6BF8E11DB4F3C05 /* VisionProCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionProCameraSource.swift; sourceTree = "<group>"; };
 		6753C341342691226C81BB0F /* ASLVisionProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASLVisionProApp.swift; sourceTree = "<group>"; };
 		6C095200FE6E6F20CF1D563D /* TutorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorView.swift; sourceTree = "<group>"; };
+		6D83D7009E1138A23A4FE070 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		6FC062257A81F9A4831E825F /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		7225A8465E5135346796C62E /* GlossInterpreter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossInterpreter.swift; sourceTree = "<group>"; };
 		73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectorView.swift; sourceTree = "<group>"; };
 		7A685AA7E7407A2499972D37 /* SignSpeakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSpeakerTests.swift; sourceTree = "<group>"; };
@@ -229,6 +235,7 @@
 		4C3A87FD527FBACC7679E747 /* Pipeline */ = {
 			isa = PBXGroup;
 			children = (
+				6D83D7009E1138A23A4FE070 /* AppSettings.swift */,
 				FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */,
 				C80DF897D35883B59A952C3B /* DataCollector.swift */,
 				8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */,
@@ -330,6 +337,7 @@
 		D7A8F5485C33539A8DB8524F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6FC062257A81F9A4831E825F /* AppSettingsTests.swift */,
 				2721EB15B65F7A51BD553FE8 /* CaptionAssemblerTests.swift */,
 				DB3DE7747EFF38B5361BCC92 /* CTCDecoderTests.swift */,
 				22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */,
@@ -483,6 +491,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21383D1A2D340953A938E344 /* AppSettings.swift in Sources */,
+				C0A33FB2A7618872BFB309EB /* AppSettingsTests.swift in Sources */,
 				11DAD023034AEF03EDFE6508 /* CTCDecoderTests.swift in Sources */,
 				F4AA9958638BA315AC3DC34E /* CaptionAssemblerTests.swift in Sources */,
 				653BDCE2CBC12164BBF14B78 /* CaptionView.swift in Sources */,
@@ -531,6 +541,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				14C9B80146564B780B9942AC /* ASLVisionProApp.swift in Sources */,
+				7EDCB04687DB42F5473E9691 /* AppSettings.swift in Sources */,
 				D52B4081AD45C362EFCEF070 /* CaptionView.swift in Sources */,
 				14C1FB4F112B8D0855A4197C /* ContentView.swift in Sources */,
 				8AAFB8D3C2106193F6A10167 /* ContinuousSignRecognizer.swift in Sources */,
@@ -570,6 +581,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				96E58FFEE811311310E71076 /* ASLVisionProApp_iOS.swift in Sources */,
+				C4C5A1215372C4A65FD66E26 /* AppSettings.swift in Sources */,
 				16F82A599E7660909417ED70 /* CameraPreview.swift in Sources */,
 				3C5818C909270426D3D32FE0 /* CaptionView.swift in Sources */,
 				1449EC80BC9114ABD127A0F1 /* ContentView_iOS.swift in Sources */,

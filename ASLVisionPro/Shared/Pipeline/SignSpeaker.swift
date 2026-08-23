@@ -34,7 +34,10 @@ final class SignSpeaker {
 
         var title: String { self == .word ? "Each sign" : "Sentences" }
     }
-    var mode: Mode = .sentence
+    /// Defaults to speaking each sign, since sentence assembly is behind a setting. Selecting
+    /// sentence mode without that setting on would leave voice output silent, because nothing
+    /// would ever assemble a sentence to speak.
+    var mode: Mode = .word
 
     private(set) var isSpeaking = false
     /// Most recent utterance, for the UI to show what was said.
@@ -46,6 +49,13 @@ final class SignSpeaker {
 
     private let log = Logger(subsystem: "ASLVisionPro", category: "Speaker")
     private let synthesizer = AVSpeechSynthesizer()
+    /// Injected rather than reached for, so a test can vary the flag without mutating global
+    /// state that other tests then inherit.
+    private let settings: AppSettings
+
+    init(settings: AppSettings = .shared) {
+        self.settings = settings
+    }
     private var lastText: String?
     private var lastSpokenAt = Date.distantPast
     /// A sign held across several windows re-fires recognition; without this the same word is
@@ -65,7 +75,7 @@ final class SignSpeaker {
     /// Speak an assembled English sentence. Sentence mode only, so the two modes never
     /// double up on the same utterance.
     func speak(sentence: String) {
-        guard isEnabled, mode == .sentence else { return }
+        guard isEnabled, mode == .sentence, settings.sentencesEnabled else { return }
         utter(sentence)
     }
 

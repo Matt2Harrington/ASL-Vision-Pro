@@ -16,7 +16,8 @@ struct ContentView_iOS: View {
     @State private var mirrored = true
     @State private var showCalibration = false
     @State private var speakEnabled = false
-    @State private var speakMode: SignSpeaker.Mode = .sentence
+    @State private var speakMode: SignSpeaker.Mode = .word
+    @State private var settings = AppSettings.shared
     @State private var threshold: Float = 0.75
     @State private var streak = 2
 
@@ -42,7 +43,7 @@ struct ContentView_iOS: View {
                 Spacer()
                 guessPill
                 if showTranscript { transcript }
-                if showCalibration { calibration }
+                if showCalibration { calibration; sentenceSetting }
                 if speakEnabled { speakBar }
                 controls
             }
@@ -139,12 +140,14 @@ struct ContentView_iOS: View {
     /// visible and can be silenced mid-utterance.
     private var speakBar: some View {
         VStack(spacing: 8) {
-            Picker("", selection: $speakMode) {
-                ForEach(SignSpeaker.Mode.allCases, id: \.self) { Text($0.title).tag($0) }
+            if settings.sentencesEnabled {
+                Picker("", selection: $speakMode) {
+                    ForEach(SignSpeaker.Mode.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: speakMode) { pipeline.speaker.mode = speakMode }
+                .frame(maxWidth: 260)
             }
-            .pickerStyle(.segmented)
-            .onChange(of: speakMode) { pipeline.speaker.mode = speakMode }
-            .frame(maxWidth: 260)
 
             HStack(spacing: 8) {
                 Image(systemName: "quote.opening").font(.caption2).foregroundStyle(.white.opacity(0.5))
@@ -160,7 +163,7 @@ struct ContentView_iOS: View {
                 }
             }
 
-            Text(speakMode == .word
+            Text(speakMode == .word || !settings.sentencesEnabled
                  ? "Speaks each sign above \(Int(pipeline.speaker.threshold * 100))% confidence"
                  : "Speaks a sentence when you pause")
                 .font(.caption2)
@@ -173,12 +176,44 @@ struct ContentView_iOS: View {
         .padding(.top, 8)
     }
 
+    /// The sentence feature flag. Sitting next to the output it governs makes the trade
+    /// visible at the moment it matters: fluency against speed and certainty.
+    private var sentenceSetting: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Toggle(isOn: Binding(
+                get: { settings.sentencesEnabled },
+                set: { on in
+                    settings.sentencesEnabled = on
+                    if !on {
+                        speakMode = .word
+                        pipeline.speaker.mode = .word
+                        showTranscript = false
+                        pipeline.reset()
+                    }
+                }
+            )) {
+                Text("Build sentences").font(.callout).foregroundStyle(.white)
+            }
+            Text("Groups signs into English when you pause. Slower, and adds an interpretation on top of what was recognized.")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.55))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+    }
+
     // MARK: - Controls
 
     private var controls: some View {
         HStack(spacing: 10) {
-            smallButton(showTranscript ? "text.bubble.fill" : "text.bubble") {
-                showTranscript.toggle()
+            if settings.sentencesEnabled {
+                smallButton(showTranscript ? "text.bubble.fill" : "text.bubble") {
+                    showTranscript.toggle()
+                }
             }
             smallButton(speakEnabled ? "speaker.wave.2.fill" : "speaker.slash") {
                 speakEnabled.toggle()

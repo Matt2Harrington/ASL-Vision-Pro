@@ -37,7 +37,8 @@ final class TranslationPipeline {
     private let assembler = CaptionAssembler()
     private let interpreter: GlossInterpreting
     /// Speaks recognized signing aloud. Exposed so the UI can offer its controls.
-    let speaker = SignSpeaker()
+    let speaker: SignSpeaker
+    private let settings: AppSettings
 
     /// Glosses accumulated since the last translation.
     private var pendingGlosses: [String] = []
@@ -57,10 +58,13 @@ final class TranslationPipeline {
 
     init(source: FrameSource,
          recognizer: SignRecognizing = StubSignRecognizer(),
-         interpreter: GlossInterpreting = GlossInterpreterFactory.make()) {
+         interpreter: GlossInterpreting = GlossInterpreterFactory.make(),
+         settings: AppSettings = .shared) {
         self.source = source
         self.recognizer = recognizer
         self.interpreter = interpreter
+        self.settings = settings
+        self.speaker = SignSpeaker(settings: settings)
     }
 
     func start() {
@@ -110,6 +114,9 @@ extension TranslationPipeline {
     private func scheduleTranslation(of result: RecognitionResult) {
         // Continuous recognizers already emit whole phrases; nothing to assemble.
         guard result.kind != .phrase else { return }
+        // Sentence assembly is opt-in. With it off, nothing accumulates and no language model
+        // runs, so the app stays on exactly what was recognized.
+        guard settings.sentencesEnabled else { return }
 
         pendingGlosses.append(result.text)
         translateTask?.cancel()
