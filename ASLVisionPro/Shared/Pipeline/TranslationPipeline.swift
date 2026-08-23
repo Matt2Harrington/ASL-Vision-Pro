@@ -36,6 +36,8 @@ final class TranslationPipeline {
     private let recognizer: SignRecognizing
     private let assembler = CaptionAssembler()
     private let interpreter: GlossInterpreting
+    /// Speaks recognized signing aloud. Exposed so the UI can offer its controls.
+    let speaker = SignSpeaker()
 
     /// Glosses accumulated since the last translation.
     private var pendingGlosses: [String] = []
@@ -93,6 +95,7 @@ final class TranslationPipeline {
 
             history.append(result)
             caption = assembler.append(result)
+            speaker.speak(sign: result.text, confidence: result.confidence)
             scheduleTranslation(of: result)
         }
         isRunning = false
@@ -128,7 +131,18 @@ extension TranslationPipeline {
 
         // Keep the previous translation rather than blanking the line when the model
         // declines — an empty result is not evidence the earlier one was wrong.
-        if let english { translation = english }
+        if let english {
+            translation = english
+            speaker.speak(sentence: english)
+        } else if speaker.mode == .sentence, glosses.count >= 2 {
+            // No language model, or it declined. Speaking the raw glosses is still more
+            // useful than silence, and is honest about what was actually recognized.
+            speaker.speak(sentence: glosses.joined(separator: " ").replacingOccurrences(of: "-", with: " "))
+        }
+
+        // An utterance is finished once spoken, so the next phrase starts clean instead of
+        // accumulating the whole conversation into one ever-growing sentence.
+        pendingGlosses.removeAll()
     }
 
     /// Live calibration knobs, applied to the Core ML recognizer when present.
@@ -148,6 +162,8 @@ extension TranslationPipeline {
         pendingGlosses.removeAll()
         translation = nil
         caption = ""
+        speaker.stop()
+        speaker.reset()
     }
 }
 

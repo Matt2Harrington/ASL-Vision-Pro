@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		01FCA8A70EE128F3F3058240 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B64619D64B28CD94BA0FE /* DesignSystem.swift */; };
 		0230427B7E12C3708C27E0C9 /* TutorSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F71021605D77EAAAECCCCD /* TutorSession.swift */; };
+		039AD3DF849F0E7DF7EF473E /* SignSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368545E8DF605100D2C9BB26 /* SignSpeaker.swift */; };
 		0500F3C2380EBBB915892314 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
 		05BA1886BB231C2F1E743ACC /* FeatureEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA53E8FB8877B8C74E3B2D /* FeatureEncoderTests.swift */; };
 		07E2EAF2F4670E7DA290A8B4 /* FeatureEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */; };
@@ -53,6 +54,7 @@
 		596BCD94112AF9280C3F5DD6 /* SpeechListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EF1286005321F8FAA219B1 /* SpeechListener.swift */; };
 		5ACC858C667797E1D1B0C256 /* TranslationCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB213BC4619D4796F6B51599 /* TranslationCheckView.swift */; };
 		5D19B7603CE1A23E7CCCE731 /* DataCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */; };
+		5E0DC67FDA701099F677C2AF /* SignSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368545E8DF605100D2C9BB26 /* SignSpeaker.swift */; };
 		653BDCE2CBC12164BBF14B78 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9017CB0A2A97D820AF1AE41C /* CaptionView.swift */; };
 		65EAB759ED08EFE89047E162 /* GlossInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7225A8465E5135346796C62E /* GlossInterpreter.swift */; };
 		65F14C229CD191B9EA8A2AB6 /* RecognizerFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D0928C0EA0529275117576 /* RecognizerFactoryTests.swift */; };
@@ -67,6 +69,7 @@
 		796E07E99C352966807CF4D4 /* SignFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4F586D13CB5157D8952B13 /* SignFrame.swift */; };
 		7F53D94A70CE70C452A1A589 /* RecognizerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED55E262AE4C857D8503503 /* RecognizerFactory.swift */; };
 		81B89D4883876A242F82016D /* TutorSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */; };
+		81ECE8306979B0520E0AB1D7 /* SignCatalogTests.swift.tmp in Resources */ = {isa = PBXBuildFile; fileRef = 1B522FB6F72292FE469BCE2A /* SignCatalogTests.swift.tmp */; };
 		82FA4ABED57C4ADD1E6897D5 /* FoundationModelSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BF9B6A5B015CAB9C6C9D42 /* FoundationModelSmokeTests.swift */; };
 		83BC3DDBDD2FF32FEFBD7866 /* ContinuousSignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE5647696BD4D1ED7986DD5 /* ContinuousSignRecognizer.swift */; };
 		8536359884BE80EE279E98E7 /* SignRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */; };
@@ -104,9 +107,11 @@
 		D52B4081AD45C362EFCEF070 /* CaptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9017CB0A2A97D820AF1AE41C /* CaptionView.swift */; };
 		D8C68985E568614514E07679 /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
 		D9325DD3C9D515EAE15A6186 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 492A3A859F475AB35B16052A /* README.md */; };
+		D9EBC1D6494FBC330AC920F1 /* SignSpeakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A685AA7E7407A2499972D37 /* SignSpeakerTests.swift */; };
 		DD6A8E41C65D14A83F728436 /* TranslationPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC54458857BF2C6378239B1C /* TranslationPipeline.swift */; };
 		DE70B4F7117F25AEA0CB0CCF /* SignModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */; };
 		E0ACC3E27B832731721A567F /* SignModel.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE5FA39D2E15309378E8A7D8 /* SignModel.mlpackage */; };
+		E525F1CD44564BEFEB248E03 /* SignSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368545E8DF605100D2C9BB26 /* SignSpeaker.swift */; };
 		E6D5AADC2A2520A850941AA1 /* DataCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */; };
 		E7E40F01183C640F3257065B /* ListenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4675CDC54CBCF64C4DA97552 /* ListenView.swift */; };
 		EFF43848EF10E303BB04522B /* SignSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E55BABCF765022D71DE165 /* SignSegmenter.swift */; };
@@ -124,6 +129,7 @@
 		07174F6E59F08F4A5366FAB6 /* DictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryView.swift; sourceTree = "<group>"; };
 		14E55BABCF765022D71DE165 /* SignSegmenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSegmenter.swift; sourceTree = "<group>"; };
 		16F71021605D77EAAAECCCCD /* TutorSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorSession.swift; sourceTree = "<group>"; };
+		1B522FB6F72292FE469BCE2A /* SignCatalogTests.swift.tmp */ = {isa = PBXFileReference; path = SignCatalogTests.swift.tmp; sourceTree = "<group>"; };
 		20E80105E4D107589DEA4BC6 /* SignVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignVerifier.swift; sourceTree = "<group>"; };
 		2283F2E96C685D8D678A23B3 /* iPhoneCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPhoneCameraSource.swift; sourceTree = "<group>"; };
 		22B1971CBBDF527391FBC940 /* DataCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectorTests.swift; sourceTree = "<group>"; };
@@ -133,6 +139,7 @@
 		2C369471C27E5AA01638AD44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2C4F586D13CB5157D8952B13 /* SignFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignFrame.swift; sourceTree = "<group>"; };
 		2C7085980D0B9E5DBA7F98B0 /* GlossTranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossTranslatorTests.swift; sourceTree = "<group>"; };
+		368545E8DF605100D2C9BB26 /* SignSpeaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSpeaker.swift; sourceTree = "<group>"; };
 		3BE32EBAB3FAEE5B1F766AE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3F41BA497F58308493B02227 /* ModeSelectionView_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectionView_iOS.swift; sourceTree = "<group>"; };
 		4675CDC54CBCF64C4DA97552 /* ListenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenView.swift; sourceTree = "<group>"; };
@@ -144,6 +151,7 @@
 		6C095200FE6E6F20CF1D563D /* TutorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorView.swift; sourceTree = "<group>"; };
 		7225A8465E5135346796C62E /* GlossInterpreter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossInterpreter.swift; sourceTree = "<group>"; };
 		73FC39F032E43FB286E87BD3 /* DataCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCollectorView.swift; sourceTree = "<group>"; };
+		7A685AA7E7407A2499972D37 /* SignSpeakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignSpeakerTests.swift; sourceTree = "<group>"; };
 		86BA53E8FB8877B8C74E3B2D /* FeatureEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEncoderTests.swift; sourceTree = "<group>"; };
 		89D85EA4972693E5B57659CE /* FoundationModelGlossInterpreter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundationModelGlossInterpreter.swift; sourceTree = "<group>"; };
 		8D54CE035B2E4F64EF23D81A /* FeatureEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureEncoder.swift; sourceTree = "<group>"; };
@@ -234,6 +242,7 @@
 				2C4F586D13CB5157D8952B13 /* SignFrame.swift */,
 				EEF0CC9CA20AEC07F1E57961 /* SignRecognizer.swift */,
 				14E55BABCF765022D71DE165 /* SignSegmenter.swift */,
+				368545E8DF605100D2C9BB26 /* SignSpeaker.swift */,
 				20E80105E4D107589DEA4BC6 /* SignVerifier.swift */,
 				A3EF1286005321F8FAA219B1 /* SpeechListener.swift */,
 				FC54458857BF2C6378239B1C /* TranslationPipeline.swift */,
@@ -332,7 +341,9 @@
 				D4D0928C0EA0529275117576 /* RecognizerFactoryTests.swift */,
 				EA01CDDECADBF9DDED5E36A8 /* SignAttemptTests.swift */,
 				E04DC49794AE7E4247AB9D30 /* SignCatalogTests.swift */,
+				1B522FB6F72292FE469BCE2A /* SignCatalogTests.swift.tmp */,
 				B3DD7AA34EEB9FA5846EAADC /* SignSegmenterTests.swift */,
+				7A685AA7E7407A2499972D37 /* SignSpeakerTests.swift */,
 				9329D6FCEDF3C29D316B0048 /* TutorSessionTests.swift */,
 			);
 			path = Tests;
@@ -439,6 +450,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9325DD3C9D515EAE15A6186 /* README.md in Resources */,
+				81ECE8306979B0520E0AB1D7 /* SignCatalogTests.swift.tmp in Resources */,
 				1D5F12A33B136EE461B79025 /* labels.json in Resources */,
 				90749BB480FFB6575478B436 /* signs.json in Resources */,
 			);
@@ -503,6 +515,8 @@
 				6A41931687D24BF61916AFBB /* SignRecognizer.swift in Sources */,
 				AE4A750D76804D77ACE0268A /* SignSegmenter.swift in Sources */,
 				329A9347A5AB348EF2F8FA97 /* SignSegmenterTests.swift in Sources */,
+				039AD3DF849F0E7DF7EF473E /* SignSpeaker.swift in Sources */,
+				D9EBC1D6494FBC330AC920F1 /* SignSpeakerTests.swift in Sources */,
 				78AE42B4B9BD807DAC2C4AAF /* SignVerifier.swift in Sources */,
 				596BCD94112AF9280C3F5DD6 /* SpeechListener.swift in Sources */,
 				5ACC858C667797E1D1B0C256 /* TranslationCheckView.swift in Sources */,
@@ -540,6 +554,7 @@
 				DE70B4F7117F25AEA0CB0CCF /* SignModel.mlpackage in Sources */,
 				8536359884BE80EE279E98E7 /* SignRecognizer.swift in Sources */,
 				EFF43848EF10E303BB04522B /* SignSegmenter.swift in Sources */,
+				E525F1CD44564BEFEB248E03 /* SignSpeaker.swift in Sources */,
 				0B0E0D48459B3863AE39ED9C /* SignVerifier.swift in Sources */,
 				15E1FEE879C9747C922F96A5 /* SpeechListener.swift in Sources */,
 				561921220E7E17B7250767D3 /* TranslationCheckView.swift in Sources */,
@@ -578,6 +593,7 @@
 				E0ACC3E27B832731721A567F /* SignModel.mlpackage in Sources */,
 				C47C19A745595E02E0EEFD18 /* SignRecognizer.swift in Sources */,
 				2B09284D741FDF0A7C143EC5 /* SignSegmenter.swift in Sources */,
+				5E0DC67FDA701099F677C2AF /* SignSpeaker.swift in Sources */,
 				3794ED1F41FAFB0E57CCB1DB /* SignVerifier.swift in Sources */,
 				AF262ADEC831A8E596D83EA3 /* SpeechListener.swift in Sources */,
 				4806237C6DD66CCA9258BB78 /* TranslationCheckView.swift in Sources */,

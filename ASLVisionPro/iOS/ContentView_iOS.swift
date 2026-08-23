@@ -15,6 +15,8 @@ struct ContentView_iOS: View {
     @State private var usingFront = true
     @State private var mirrored = true
     @State private var showCalibration = false
+    @State private var speakEnabled = false
+    @State private var speakMode: SignSpeaker.Mode = .sentence
     @State private var threshold: Float = 0.75
     @State private var streak = 2
 
@@ -41,6 +43,7 @@ struct ContentView_iOS: View {
                 guessPill
                 if showTranscript { transcript }
                 if showCalibration { calibration }
+                if speakEnabled { speakBar }
                 controls
             }
             .padding(.bottom, 28)
@@ -132,12 +135,55 @@ struct ContentView_iOS: View {
         .padding(.top, 10)
     }
 
+    /// Voice output. Speaking puts words in the signer's mouth, so what was said stays
+    /// visible and can be silenced mid-utterance.
+    private var speakBar: some View {
+        VStack(spacing: 8) {
+            Picker("", selection: $speakMode) {
+                ForEach(SignSpeaker.Mode.allCases, id: \.self) { Text($0.title).tag($0) }
+            }
+            .pickerStyle(.segmented)
+            .onChange(of: speakMode) { pipeline.speaker.mode = speakMode }
+            .frame(maxWidth: 260)
+
+            HStack(spacing: 8) {
+                Image(systemName: "quote.opening").font(.caption2).foregroundStyle(.white.opacity(0.5))
+                Text(pipeline.speaker.lastSpoken ?? "nothing spoken yet")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(pipeline.speaker.lastSpoken == nil ? 0.4 : 0.9))
+                    .lineLimit(1)
+                if pipeline.speaker.isSpeaking {
+                    Button { pipeline.speaker.stop() } label: {
+                        Image(systemName: "stop.circle.fill").foregroundStyle(.red)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Text(speakMode == .word
+                 ? "Speaks each sign above \(Int(pipeline.speaker.threshold * 100))% confidence"
+                 : "Speaks a sentence when you pause")
+                .font(.caption2)
+                .foregroundStyle(.white.opacity(0.5))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+    }
+
     // MARK: - Controls
 
     private var controls: some View {
         HStack(spacing: 10) {
             smallButton(showTranscript ? "text.bubble.fill" : "text.bubble") {
                 showTranscript.toggle()
+            }
+            smallButton(speakEnabled ? "speaker.wave.2.fill" : "speaker.slash") {
+                speakEnabled.toggle()
+                pipeline.speaker.isEnabled = speakEnabled
+                if !speakEnabled { pipeline.speaker.stop() }
             }
             smallButton("arrow.counterclockwise") { pipeline.reset() }
             if pipeline.isCalibratable {
