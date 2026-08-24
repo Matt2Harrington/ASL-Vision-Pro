@@ -23,7 +23,21 @@ else signing. Nothing leaves the device.
 **Recognizer — 24 signs + NONE**, **72.3% on held-out signers** (chance = 4%).
 A 900 KB quantized Core ML model trained on ~3,000 clips from 21 Deaf signers:
 
-> BAD · BOOK · BYE · DAD · DRINK · FINISH · FOOD · HAPPY · HELLO · HOME · HOT · HUNGRY · LIKE · LISTEN · LOOK · MAD · MILK · MOM · MORNING · NIGHT · NO · PLEASE · WATER · YES
+| Category | Signs |
+|---|---|
+| **Greetings** | BYE · HELLO |
+| **Courtesy** | PLEASE |
+| **Responses** | BAD · FINISH · LIKE · NO · YES |
+| **Needs** | DRINK · FOOD · MILK · WATER |
+| **Feelings** | HAPPY · HOT · HUNGRY · MAD |
+| **People** | DAD · MOM |
+| **Places** | BOOK · HOME |
+| **Time** | MORNING · NIGHT |
+| **Conversation repair** | LISTEN · LOOK |
+
+The vocabulary comes from a child-focused corpus, which is why it covers family, food and
+feelings well and lacks question words. WHERE, WHO, WHY and THANK-YOU are queued; SORRY is not
+in the corpus at all, though the dictionary describes it.
 
 **Translation:** ASL gloss → English via Apple's on-device foundation model. No training was
 needed; prompt engineering alone took it from 2/6 to 5/6 correct. Off by default — sentence
@@ -204,13 +218,19 @@ Two structural decisions worth preserving:
 
 ## Honest limitations
 
-- **Five signs.** A demo, not a product. Expanding is a download and a retrain, not new code.
-- **Real-world accuracy is unverified.** 91.8% is measured on the source corpus; on-device
-  performance in a real room is still being calibrated.
+- **Twenty-four signs.** A demo, not a product. The corpus is child-focused, so there are no
+  question words yet and SORRY isn't in it at all.
+- **72.3% is measured on the source corpus**, not on a phone in a room. Real-world accuracy is
+  still unverified — that's what testing on your own device tells you.
+- **More data has diminishing returns.** 30% more clips per sign bought about a point. Closing
+  the gap further likely needs a different approach, not more of the same.
 - **Continuous signing is scaffolded, not trained.** The CTC path exists and is unit-tested;
-  no model behind it.
-- **Translation takes 4–8s per phrase.** Glosses appear live; English arrives on a pause.
-- **visionOS Interpret is blocked** on an Apple enterprise entitlement, which is generally
-  unavailable to individual developer accounts.
-- **ASL is not English.** Gloss-to-English is an interpretation layered on recognition, and the
-  raw glosses stay visible so a wrong translation is inspectable rather than authoritative.
+  there's no model behind it.
+- **Translation takes seconds per phrase**, so it's off by default. Glosses appear live;
+  English arrives on a pause.
+- **visionOS Interpret is blocked** on an Apple enterprise entitlement, which individual
+  developer accounts generally cannot get.
+- **ASL is not English.** Gloss-to-English layers an interpretation over recognition, so the
+  raw glosses stay visible — a wrong translation should be inspectable, not authoritative.
+- **Kaggle limits downloads** to roughly 700 files a day, so growing the vocabulary is paced by
+  that rather than by effort.
