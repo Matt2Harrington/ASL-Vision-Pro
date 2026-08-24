@@ -30,7 +30,7 @@
 
     <!-- Required usage strings. Shown to the wearer; be explicit that you observe another person. -->
     <key>NSMicrophoneUsageDescription</key>
-    <string>Listen mode transcribes nearby speech so it can be shown as captions. Audio is processed on device and is not recorded or sent anywhere.</string>
+    <string>Listen mode transcribes nearby speech so it can be shown as captions, and the app can speak recognized signing aloud. Audio is processed on device and is not recorded or sent anywhere.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>Speech is transcribed on device to display live captions.</string>
     <key>NSCameraUsageDescription</key>

@@ -22,6 +22,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 import tempfile
 import zipfile
 
@@ -100,6 +101,12 @@ def main():
     ap.add_argument("--per-sign", type=int, default=150)
     ap.add_argument("--out", default="data/asl_signs")
     ap.add_argument("--dry-run", action="store_true", help="report the plan, download nothing")
+    ap.add_argument("--cooldown", type=int, default=0,
+                    help="seconds to pause when throttled, then continue instead of aborting. "
+                         "Kaggle allows roughly 500-600 files per window, so a long download "
+                         "has to be spread across several with waits between.")
+    ap.add_argument("--max-rounds", type=int, default=12,
+                    help="give up after this many throttle pauses")
     args = ap.parse_args()
 
     rows = load_rows(args.train_csv)
@@ -127,28 +134,76 @@ def main():
 
     os.makedirs(args.out, exist_ok=True)
     done = skipped = failed = 0
+    consecutive = 0
+    rounds = 0
+    done_at_last_throttle = -1
+
     for i, row in enumerate(chosen, 1):
         dest = os.path.join(args.out, row["path"])
         if os.path.exists(dest):
             skipped += 1
             continue
         os.makedirs(os.path.dirname(dest), exist_ok=True)
-        r = subprocess.run(
-            ["kaggle", "competitions", "download", "-c", COMP,
-             "-f", row["path"], "-p", os.path.dirname(dest), "--force"],
-            capture_output=True, text=True,
-        )
-        if r.returncode != 0:
-            failed += 1
-            if failed <= 3:
-                print(f"  ! {row['path']}: {r.stderr.strip().splitlines()[-1] if r.stderr else 'failed'}")
-            if failed > 20:
-                sys.exit("\nToo many failures — check that the competition rules are accepted.")
-        else:
+
+        # Kaggle throttles sustained request bursts, and a throttled request looks exactly
+        # like a failed one. Retrying with a growing pause distinguishes them: a rate limit
+        # clears, a genuine error doesn't.
+        ok = False
+        for attempt in range(3):
+            r = subprocess.run(
+                ["kaggle", "competitions", "download", "-c", COMP,
+                 "-f", row["path"], "-p", os.path.dirname(dest), "--force"],
+                capture_output=True, text=True,
+            )
+            if r.returncode == 0:
+                ok = True
+                break
+            time.sleep(2 ** attempt * 3)   # 3s, 6s, 12s
+
+        if ok:
             unzip_in_place(dest)
             done += 1
+            consecutive = 0
+        else:
+            failed += 1
+            consecutive += 1
+            if consecutive <= 3:
+                print(f"  ! {row['path']}: {r.stderr.strip().splitlines()[-1] if r.stderr else 'failed'}")
+            # Only give up on a sustained run of failures. Counting cumulatively would abort a
+            # long download over scattered throttling it had already recovered from.
+            if consecutive >= 25:
+                if not args.cooldown:
+                    print("\nAborting: 25 consecutive failures. Either the competition rules "
+                          "aren't accepted, or Kaggle is rate limiting hard — wait and re-run; "
+                          "already-downloaded files are skipped. Or pass --cooldown to wait "
+                          "and continue automatically.")
+                    break
+                rounds += 1
+                # If the previous pause bought nothing, waiting the same amount again won't
+                # either — Kaggle's window is longer than the cooldown. Stop rather than
+                # cycle, since repeated requests while limited keep it refreshed.
+                if done == done_at_last_throttle:
+                    print(f"\n  The last pause produced no downloads, so the rate-limit window "
+                          f"is longer than {args.cooldown // 60} min. Stopping with {done} files "
+                          f"fetched this run.\n  Re-run later (an hour or more) — downloaded "
+                          f"files are skipped. A longer --cooldown may also work.")
+                    break
+                done_at_last_throttle = done
+
+                if rounds > args.max_rounds:
+                    print(f"\nStopping after {args.max_rounds} throttle pauses. "
+                          f"Re-run to continue — downloaded files are skipped.")
+                    break
+                mins = args.cooldown / 60
+                print(f"\n  Throttled after {done} files. Pausing {mins:.0f} min "
+                      f"(round {rounds}/{args.max_rounds}), then continuing...", flush=True)
+                time.sleep(args.cooldown)
+                consecutive = 0
+                print("  Resuming.", flush=True)
+
         if i % 25 == 0 or i == len(chosen):
-            print(f"  {i}/{len(chosen)}  downloaded={done} skipped={skipped} failed={failed}")
+            print(f"  {i}/{len(chosen)}  downloaded={done} skipped={skipped} failed={failed}",
+                  flush=True)
 
     print(f"\ndone: {done} downloaded, {skipped} already present, {failed} failed -> {args.out}")
 
