@@ -4,7 +4,7 @@ Two apps — **visionOS** and **iOS** — sharing one on-device ASL recognition 
 Practise your signing, look signs up, follow live speech, and (where permitted) caption someone
 else signing. Nothing leaves the device.
 
-> **Experimental prototype.** The recognizer knows five signs. Recognition can be wrong.
+> **Experimental prototype.** The recognizer knows 24 signs. Recognition can be wrong.
 > Never rely on it for critical communication.
 
 ---
@@ -72,69 +72,331 @@ differ.
 
 ## Getting started
 
-Never used git or Xcode? This section assumes nothing. If you'd rather skip git entirely,
-[QUICKSTART.md](QUICKSTART.md) walks through downloading a ZIP instead.
+This section assumes **no** prior experience with git, GitHub, Xcode, or the terminal. It's
+long because it explains what each step is doing, not because there's much to do.
+
+- **Part A — Run it** gets the app onto a simulator and then your iPhone.
+- **Part B — Make it yours** sets up GitHub and Claude Code so you can change the project and
+  save your work.
+
+If you only want to see it run and never touch git, do Part A and stop. If you'd rather avoid
+the terminal completely, [QUICKSTART.md](QUICKSTART.md) covers downloading a ZIP instead.
+
+**You need:** a Mac (Apple Silicon or Intel, macOS Sonoma or later). Roughly an hour, most of
+it waiting for Xcode to download. Everything here is free — no paid Apple developer account.
+
+### Words you'll see, in plain English
+
+| Word | What it actually means |
+|---|---|
+| **Terminal** | An app on your Mac where you type commands instead of clicking. Applications → Utilities → Terminal, or press ⌘-Space and type "Terminal" |
+| **git** | A tool that tracks every version of a project, so nothing is ever lost |
+| **GitHub** | A website that stores git projects online. git is the tool; GitHub is the place |
+| **repo** (repository) | One project's folder plus its entire history |
+| **clone** | Download a copy of a repo onto your Mac |
+| **fork** | Your own copy of someone else's repo on GitHub, which you're allowed to change |
+| **commit** | A save point, with a note saying what changed and why |
+| **push** | Upload your commits to GitHub |
+| **pull** | Download other people's commits |
+| **branch** | A parallel line of work, so unfinished changes don't disturb the working version |
+
+> **Copying commands:** each grey box below is one command. Paste it into Terminal and press
+> Return. Don't type the box itself, and ignore any `$` you see in other tutorials.
+
+---
+
+## Part A — Run it
 
 ### 1. Install Xcode
 
-Apple's free app for building iPhone apps, from the **App Store** — search "Xcode". It's a
-10 GB+ download, so start it and come back later. Open it once when it finishes and accept the
-licence it shows.
+Xcode is Apple's free app for building iPhone apps.
 
-This also installs **git**, so there's nothing separate to install.
+1. Open the **App Store** on your Mac
+2. Search for **Xcode**
+3. Click **Get** / **Install**
 
-### 2. Get the code
+It's a 10 GB+ download and can take 30–60 minutes. Start it now and read on while it goes.
 
-Git copies the project to your Mac and lets you pull updates later. Open **Terminal**
-(Applications → Utilities, or ⌘-Space and type "Terminal"), then paste:
+When it finishes, **open Xcode once** and accept the licence agreement. Let it install any
+extra components it asks for.
+
+This also installs **git**, so there's nothing separate to install for that.
+
+### 2. Get the code onto your Mac
+
+Open **Terminal** and paste these two lines, one at a time:
 
 ```bash
 git clone https://github.com/Matt2Harrington/ASL-Vision-Pro.git
+```
+
+```bash
 cd ASL-Vision-Pro
 ```
 
-`clone` downloads the project into a folder named `ASL-Vision-Pro`; `cd` moves you into it.
-You'll be asked to install command line tools the first time — say yes.
+`clone` downloads the project into a new folder called `ASL-Vision-Pro` (inside whatever folder
+Terminal started in — your home folder, unless you changed it). `cd` means "change directory",
+i.e. step into that folder. Every command from here on assumes you're inside it.
 
-> Prefer not to use Terminal? [GitHub Desktop](https://desktop.github.com) does the same thing
-> with buttons, or use the green **Code → Download ZIP** button on the GitHub page.
+The first time you run a git command, macOS may offer to install command line tools. Say yes
+and wait for it to finish.
 
-### 3. Open and run
+> Prefer buttons to typing? [GitHub Desktop](https://desktop.github.com) does clone, commit and
+> push with a graphical interface.
+
+### 3. Open the project
 
 ```bash
 open ASLVisionPro.xcodeproj
 ```
 
-In Xcode, the bar at the top has two dropdowns. Set the left one to **ASLVisionPro-iOS** and
-the right one to any iPhone simulator, then press **▶**.
+Xcode opens and says "Indexing" for a minute or two. That's it reading the code — normal.
 
-That's it — no configuration, no Apple account, no extra tools. The trained model is included,
-so sign recognition works immediately.
+The `.xcodeproj` file is committed to this repo, so there is nothing to generate or configure.
+The trained recognition model is committed too, so sign recognition works immediately.
 
-### 4. Run on your own iPhone
+### 4. Run it in the simulator
 
-Needs a free Apple ID, and two changes so the app is registered to *you* rather than someone
-else:
+The simulator is a fake iPhone on your Mac. It's the fastest way to check everything works.
 
-1. **Xcode → Settings → Accounts → +** → sign in with your Apple ID
-2. Click the blue **ASLVisionPro** at the top of the left sidebar → **ASLVisionPro-iOS** under
-   TARGETS → **Signing & Capabilities**
-3. Change **Bundle Identifier** from `com.example…` to your own, e.g. `com.yourname.ASLVisionPro.iOS`
-4. Pick your name under **Team**
-5. Plug in your iPhone, choose it in the device dropdown, press **▶**
+1. At the top of the Xcode window is a bar with two dropdowns
+2. Set the **left** one to **ASLVisionPro-iOS**
+3. Set the **right** one to any **iPhone** simulator
+4. Press **▶** (top left), or ⌘R
 
-The first launch fails with "Untrusted Developer" — that's expected. On the phone:
-**Settings → General → VPN & Device Management → your Apple ID → Trust**, then press ▶ again.
+The app launches. **Dictionary** works fully here. Camera modes will be black — a simulator has
+no camera, which is exactly why step 5 exists.
 
-> Free accounts get 7-day app licences. When the app stops opening, plug in and press ▶ again.
+### 5. Run it on your own iPhone
 
-### 5. Getting updates later
+This is the only way to see recognition actually work. A **free** Apple ID is enough.
+
+**Sign in to Xcode**
+Menu bar → **Xcode → Settings → Accounts → +** → **Apple ID** → sign in.
+
+**Give the app an identifier that belongs to you**
+Apple requires every app to have a worldwide-unique identifier. The one in this repo is a
+neutral placeholder, and if someone else has already claimed it your install will be refused.
+
+1. Click the blue **ASLVisionPro** at the very top of the left sidebar
+2. Under **TARGETS**, select **ASLVisionPro-iOS**
+3. Open the **Signing & Capabilities** tab
+4. Change **Bundle Identifier** from `com.example…` to your own, e.g.
+   `com.yourname.ASLVisionPro.iOS`
+5. In **Team** just above it, choose your name (Personal Team)
+
+**Run**
+Plug the iPhone in with a cable, unlock it, tap **Trust** if asked. Choose it in the device
+dropdown and press **▶**.
+
+**The first launch will fail** with "Untrusted Developer". That is expected, not a mistake. On
+the phone: **Settings → General → VPN & Device Management → tap your Apple ID → Trust**. Then
+press ▶ again.
+
+Allow **camera** and **microphone** when asked. Everything is processed on the phone; nothing
+is uploaded.
+
+> Free Apple accounts get 7-day app licences. When the app stops opening after about a week,
+> plug in and press ▶ again. Nothing is broken.
+
+### 6. Getting updates later
 
 ```bash
 git pull
 ```
 
-Run that inside the project folder to fetch newer versions.
+Run that inside the project folder to fetch newer versions. (After Part B, use
+`git pull upstream main` instead — Part B explains why.)
+
+---
+
+## Part B — Make it yours
+
+Everything above was read-only. This part sets you up to **change** the project and save your
+work, using Claude Code to do the git parts while explaining them.
+
+You can't save changes into someone else's repo on GitHub, so the first job is making a copy
+that belongs to you.
+
+### 7. Make a GitHub account
+
+Go to [github.com](https://github.com) and sign up. Free. Pick a username you're happy having
+in public — it appears on everything you publish.
+
+### 8. Fork this repo
+
+A **fork** is your own copy of the project on GitHub.
+
+1. Open <https://github.com/Matt2Harrington/ASL-Vision-Pro>
+2. Click **Fork** (top right) → **Create fork**
+
+You now have `https://github.com/YOUR-USERNAME/ASL-Vision-Pro`, which you can push to.
+
+### 9. Point your Mac's copy at your fork
+
+The folder you cloned in step 2 still points at the original repo. Two commands fix that.
+Replace `YOUR-USERNAME` with yours in both:
+
+```bash
+git remote set-url origin https://github.com/YOUR-USERNAME/ASL-Vision-Pro.git
+```
+
+```bash
+git remote add upstream https://github.com/Matt2Harrington/ASL-Vision-Pro.git
+```
+
+A **remote** is a nickname for a repo on the internet. You now have two:
+
+- **`origin`** — your fork. This is where your work goes (`git push`)
+- **`upstream`** — the original. This is where updates come from (`git pull upstream main`)
+
+Check it worked:
+
+```bash
+git remote -v
+```
+
+You should see your own username on the `origin` lines.
+
+### 10. Tell git who you are
+
+Commits are stamped with a name and email. Set them once:
+
+```bash
+git config --global user.name "Your Name"
+```
+
+```bash
+git config --global user.email "you@example.com"
+```
+
+Use the same email as your GitHub account so your commits are linked to your profile.
+
+### 11. Let your Mac log in to GitHub
+
+Pushing requires proving you're you. GitHub stopped accepting account passwords for this, so
+the smooth route is GitHub's own command line tool.
+
+Install [Homebrew](https://brew.sh) (a package installer for macOS) if you don't have it:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Then:
+
+```bash
+brew install gh
+```
+
+```bash
+gh auth login
+```
+
+Answer: **GitHub.com** → **HTTPS** → **Yes** (authenticate git) → **Login with a web browser**.
+It shows a one-time code, opens your browser, and you approve there.
+
+> You log in on GitHub's own website. Never paste a password or access token into a chat
+> window — including a chat with Claude. Anything typed into a conversation stays in its
+> transcript.
+
+### 12. Install Claude Code
+
+Claude Code is a coding assistant that runs in your Terminal, in the same folder as the
+project. It can read the code, explain it, make changes, and handle git for you.
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Then, from inside the project folder:
+
+```bash
+claude
+```
+
+The first run walks you through signing in with your Claude account. Current instructions live
+at <https://docs.claude.com/en/docs/claude-code/setup> if that command has moved on.
+
+Type your request in plain English and press Return. `/help` lists commands, and Ctrl-C stops
+whatever it's doing.
+
+### 13. Work on a branch, not on `main`
+
+A **branch** is a separate line of work. Keeping `main` clean means you always have a version
+that works to go back to.
+
+```bash
+git checkout -b my-first-change
+```
+
+That creates a branch and switches to it. `git branch` lists your branches; the one with `*` is
+where you are.
+
+### 14. Make a change, and have Claude commit it
+
+Start Claude in the project folder and ask for something small and real. For example:
+
+> Add my name to the bottom of the README under a "Learning notes" heading, then commit it.
+
+Claude will edit the file and, when you approve, run the git commands. Some things worth asking
+for while you're learning — the explanations are the point:
+
+> What changed in this repo since my last commit?
+
+> Explain what a merge conflict is, using this project as the example.
+
+> I broke something. How do I get back to the last working version?
+
+To see it for yourself at any time:
+
+```bash
+git status
+```
+
+```bash
+git log --oneline -5
+```
+
+`status` shows what you've changed but not yet committed; `log` shows recent commits, newest
+first.
+
+### 15. Push it to your fork
+
+```bash
+git push -u origin my-first-change
+```
+
+Refresh your fork on GitHub and your branch is there. The `-u` sets up the link, so future
+pushes on this branch are just `git push`.
+
+If you want the change considered for the original project, GitHub will offer a **Compare &
+pull request** button. A **pull request** is a proposal: "here's my change, have a look."
+
+### 16. Staying up to date with the original
+
+```bash
+git pull upstream main
+```
+
+Do this on `main` before starting new work, so you're building on the latest version rather
+than an old one.
+
+---
+
+### When git goes wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| `not a git repository` | You're in the wrong folder | `cd ~/ASL-Vision-Pro`, or wherever you cloned it |
+| `Permission denied` / `403` on push | Pushing to someone else's repo, or not logged in | Redo steps 9 and 11 |
+| `Please tell me who you are` | Name and email not set | Step 10 |
+| `Your local changes would be overwritten` | A pull would clobber uncommitted work | Commit it first, or ask Claude what's uncommitted |
+| `CONFLICT (content): Merge conflict in …` | You and someone else changed the same lines | Not an error. Ask Claude to walk you through it |
+| `detached HEAD` | You're looking at an old commit, not a branch | `git checkout main` |
+
+Nothing here can lose committed work. Once something is committed, git keeps it — that's the
+entire point of committing early and often.
 
 ---
 
@@ -180,7 +442,7 @@ ASLVisionPro/
     UI/             DesignSystem, DictionaryView, ListenView, CaptionView,
                     DataCollectorView, TranslationCheckView, LandmarkOverlayView
     Resources/      signs.json (dictionary), labels.json (model classes)
-    Models/         SignModel.mlpackage (gitignored)
+    Models/         SignModel.mlpackage (committed — recognition works from a fresh clone)
   visionOS/         app shell, HandTrackingSource, VisionProCameraSource, TutorView
   iOS/              app shell, iPhoneCameraSource, CameraPreview
 Tests/              15 suites, 103 tests
